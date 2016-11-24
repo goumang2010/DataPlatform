@@ -3,6 +3,7 @@
  * @fileoverview view中的帮助函数
  */
 var ejs = require('ejs');
+var config = require("./config");
 
 module.exports = function(app) {
 
@@ -31,7 +32,7 @@ module.exports = function(app) {
         return str;
     };
     app.locals.createNavBarByLimit = function(userInfo,limit){
-        var limited = userInfo.limited;
+        var limited = config.limit;
         var str = '';
         for(limitItem in limited){
             if(limit[limitItem]){

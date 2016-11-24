@@ -51,6 +51,7 @@ Object.keys(config.limit).forEach((key) => {
     if(limit.display) {
         if (limit.path.length > 0) {
             for (var k of limit.path) {
+                // console.log(k);
                 module.exports.push(new renderApi(router, k));
             }
         } else if (limit.routers && limit.routers.length > 0) {

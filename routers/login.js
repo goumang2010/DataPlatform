@@ -6,15 +6,15 @@
 var ldap = require('ldapjs');
 var config = require('../config');
 var lodash = require('lodash');
-var ldapJson = require("../db/ldap.json");
+// var ldapJson = require("../db/ldap.json");
 
-var username = ldapJson.username;
-var password = ldapJson.password;
-var ldapurl = ldapJson.ldapurl;
-var superAdminInfo = {
-    username: "superAdmin",
-    password: "12345678"
-};
+// var username = ldapJson.username;
+// var password = ldapJson.password;
+// var ldapurl = ldapJson.ldapurl;
+// var superAdminInfo = {
+//     username: "superAdmin",
+//     password: "12345678"
+// };
 
 module.exports = function(Router) {
 
@@ -187,15 +187,15 @@ module.exports = function(Router) {
         }
     });
 
-    Router.get(/^((?!\/dist).)*$/, function(req, res, next) {
-        if (req.session.isLogin) {
-            /*用户输入浏览器地址栏URL路由权限控制*/
-            next();
-        } else {
-            var form = req.protocol + '://' + req.get('host') + req.originalUrl;
-            res.redirect('/login?from=' + encodeURIComponent(form));
-        }
-    });
+    // Router.get(/^((?!\/dist).)*$/, function(req, res, next) {
+    //     if (req.session.isLogin) {
+    //         /*用户输入浏览器地址栏URL路由权限控制*/
+    //         next();
+    //     } else {
+    //         var form = req.protocol + '://' + req.get('host') + req.originalUrl;
+    //         res.redirect('/login?from=' + encodeURIComponent(form));
+    //     }
+    // });
 
     return Router;
 };

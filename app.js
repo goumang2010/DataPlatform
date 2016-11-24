@@ -14,15 +14,15 @@ var mysql = require('./models2/mysql');
 var app = express();
 var async = require("asyncawait/async");
 var await = require("asyncawait/await");
-var orm = require('orm');
-var redis = require("ioredis");
-var redisInfo = require("./db/redis.json");
-var redisConfig = require("./db/config.json").redis;
-var cluster = new redis.Cluster(redisInfo[redisConfig]);
-global.cluster = cluster;
+// var orm = require('orm');
+// var redis = require("ioredis");
+// var redisInfo = require("./db/redis.json");
+// var redisConfig = require("./db/config.json").redis;
+// var cluster = new redis.Cluster(redisInfo[redisConfig]);
+// global.cluster = cluster;
 var routers = require('./routers');
 
-orm.settings.set("connection.pool", true);
+// orm.settings.set("connection.pool", true);
 // orm.settings.set("connection.debug", true);
 Object.keys(config).forEach(function(key) {
     app.locals[key] = config[key];
@@ -70,7 +70,7 @@ app.use(function(req, res, next) {
 //载入view helps
 require('./helps')(app);
 
-new mysql(app);
+// new mysql(app);
 
 routers.forEach(function(router) {
     app.use(router);

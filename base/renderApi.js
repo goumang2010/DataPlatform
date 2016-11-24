@@ -45,54 +45,36 @@ function renderApi(Router, options) {
 renderApi.prototype = {
     constructor: renderApi,
     _sendData(req, res, next) {
-        cache.cacheGet(this.modelName, (err, types) => {
-            if (!err) {
-                if (types) {
-                    this._renderData(req, res, {
-                        types: types
-                    });
-                } else {
-                    this._findData(req, res, next);
-                }
-            } else {
-                next(err);
-            }
-        });
+        this._findData(req, res, next);
+        // cache.cacheGet(this.modelName, (err, types) => {
+        //     if (!err) {
+        //         if (types) {
+        //             this._renderData(req, res, {
+        //                 types: types
+        //             });
+        //         } else {
+        //             this._findData(req, res, next);
+        //         }
+        //     } else {
+        //         next(err);
+        //     }
+        // });
     },
     _findData(req, res, next) {
-        req.models[this.modelName].find({}, (err, data) => {
-            if (!err) {
-                var types = {};
-                for (var key of this.defaultRender) {
-                    types[key.value] = [];
-                    for (var k of data) {
-                        if (key.key === k.type) {
-                            types[key.value].push(k.name);
-                        }
-                    }
-                }
-                cache.cacheSet(this.modelName, types, cacheTime, (err, success) => {
-                    if (!err && success) {
-                        this._renderData(req, res, {
-                            types: types
-                        });
-                    } else {
-                        next(err);
-                    }
-                })
-            } else {
-                next(err);
-            }
-        })
+        var types = {};
+        this._renderData(req, res, {
+            types: types
+        });
     },
     _renderData(req, res, dataParams) {
         var pageAll = {},
-            page = {},
-            limited = req.session.userInfo.limited;
+            page = {};
+            // limited = req.session.userInfo.limited;
+            // console.log(config.limit);
         for(var key in config.limit) {
             var limit = config.limit[key];
-            if(limited[key]) {
-                for(var value of limited[key]) {
+            //if(limited[key]) {
+                for(var value of limit.path) {
                     var path = limit.path[value];
                     if(path) {
                         page[path.path] = {
@@ -111,7 +93,7 @@ renderApi.prototype = {
                         };
                     }
                 }
-            }
+           // }
             if(limit.display) {
                 pageAll[key] = {
                     name : limit.name,

@@ -1,0 +1,621 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{8b839e52-3ec9-4f87-99e2-e0599b916ddc}</ProjectGuid>
+    <ProjectHome />
+    <ProjectView>ShowAllFiles</ProjectView>
+    <StartupFile>app.js</StartupFile>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <ItemGroup>
+    <Content Include="package.json" />
+    <Content Include="README.md" />
+    <Content Include="styles.xml" />
+    <Compile Include="app.js" />
+    <Compile Include="config.js" />
+    <Compile Include="helps.js" />
+    <Compile Include="base\api.js" />
+    <Compile Include="base\help.js" />
+    <Compile Include="base\main.js" />
+    <Compile Include="base\renderApi.js" />
+    <Content Include="doc\前端.md" />
+    <Content Include="doc\美信数据模型.md" />
+    <Compile Include="models\Activity.js" />
+    <Compile Include="models\ActivityChannelRelationship.js" />
+    <Compile Include="models\Channel.js" />
+    <Compile Include="models\ChannelAnalysis.js" />
+    <Compile Include="models\ChannelIdNameChart.js" />
+    <Compile Include="models\ChannelUserActive.js" />
+    <Compile Include="models\ChannelUserKeep.js" />
+    <Compile Include="models\ConfCategories.js" />
+    <Compile Include="models\Configure.js" />
+    <Compile Include="models\Count.js" />
+    <Compile Include="models\CouponGroupDate.js" />
+    <Compile Include="models\CouponGroupPriceInterrgional.js" />
+    <Compile Include="models\CouponGroupShopTop.js" />
+    <Compile Include="models\CouponInfo.js" />
+    <Compile Include="models\GroupCategoryDistribution.js" />
+    <Compile Include="models\GroupownerCategoryDistribution.js" />
+    <Compile Include="models\GroupownerList.js" />
+    <Compile Include="models\GroupownerStatistics.js" />
+    <Compile Include="models\GroupReport.js" />
+    <Compile Include="models\GroupStatistics.js" />
+    <Compile Include="models\ItemManager.js" />
+    <Compile Include="models\ItemOverview.js" />
+    <Compile Include="models\ItemPie.js" />
+    <Compile Include="models\ItemRunSales.js" />
+    <Compile Include="models\ItemRunTop.js" />
+    <Compile Include="models\KeyValue.js" />
+    <Compile Include="models\KpiValue.js" />
+    <Compile Include="models\Log.js" />
+    <Compile Include="models\MarketingCoupon.js" />
+    <Compile Include="models\MarketingCouponDetails.js" />
+    <Compile Include="models\MarketingFlow.js" />
+    <Compile Include="models\mysql.js" />
+    <Compile Include="models\NewAccount.js" />
+    <Compile Include="models\OverviewPage.js" />
+    <Compile Include="models\OverviewPlatf.js" />
+    <Compile Include="models\Rebate.js" />
+    <Compile Include="models\RebateInvitepartner.js" />
+    <Compile Include="models\RebateOrderTredencyDetails.js" />
+    <Compile Include="models\RebateRefund.js" />
+    <Compile Include="models\RebateShopOrderTredencyDetails.js" />
+    <Compile Include="models\RebateShopOverview.js" />
+    <Compile Include="models\RebateShopPlanTop.js" />
+    <Compile Include="models\RebateShopRefund.js" />
+    <Compile Include="models\RebateShopTop.js" />
+    <Compile Include="models\RebateShopTypeLevelDetails.js" />
+    <Compile Include="models\RebatetInviteseller.js" />
+    <Compile Include="models\RebatetRegisterSheduleDetails.js" />
+    <Compile Include="models\RebatetRegisterTrendency.js" />
+    <Compile Include="models\RebatetSheduleDetails.js" />
+    <Compile Include="models\RebateTypeLevelDetails.js" />
+    <Compile Include="models\Role.js" />
+    <Compile Include="models\SalesPerfProductKv.js" />
+    <Compile Include="models\SalesPerfShopKv.js" />
+    <Compile Include="models\SalesPerfTranKv.js" />
+    <Compile Include="models\SalesProductFlowtTop.js" />
+    <Compile Include="models\SalesProductMarketTop.js" />
+    <Compile Include="models\ShareAnalyzeChannel.js" />
+    <Compile Include="models\ShareAnalyzeChannelTrend.js" />
+    <Compile Include="models\ShareAnalyzeOverview.js" />
+    <Compile Include="models\ShareAnalyzeTrend.js" />
+    <Compile Include="models\ShopAccesTop.js" />
+    <Compile Include="models\ShopPayTop.js" />
+    <Compile Include="models\SocialCategory.js" />
+    <Compile Include="models\SocialGroupDetailList.js" />
+    <Compile Include="models\SocialGroupDetailStatistic.js" />
+    <Compile Include="models\SocialGroupList.js" />
+    <Compile Include="models\SocialTopicCategoryDistribution.js" />
+    <Compile Include="models\SocialTopicDetailStatistics.js" />
+    <Compile Include="models\SocialTopicList.js" />
+    <Compile Include="models\SocialTopicStatistics.js" />
+    <Compile Include="models\Statistics.js" />
+    <Compile Include="models\TradeCaty.js" />
+    <Compile Include="models\TradeUser.js" />
+    <Compile Include="models\TypeFlow.js" />
+    <Compile Include="models\UrlAccessWap.js" />
+    <Compile Include="models\UrlToName.js" />
+    <Compile Include="models\User2.js" />
+    <Compile Include="models\UserCompose.js" />
+    <Compile Include="models\UserKeepResult.js" />
+    <Compile Include="models\UsersAccess.js" />
+    <Compile Include="models\VideoPlay.js" />
+    <Compile Include="routers\categories.js" />
+    <Compile Include="routers\combine.js" />
+    <Compile Include="routers\count.js" />
+    <Compile Include="routers\index.js" />
+    <Compile Include="routers\login.js" />
+    <Compile Include="routers\renderApi.js" />
+    <Compile Include="static\gulpfile.js" />
+    <Compile Include="static\webpack.config.js" />
+    <Content Include="utils\config.json" />
+    <Compile Include="utils\cache.js" />
+    <Compile Include="utils\excelExport.js" />
+    <Compile Include="utils\index.js" />
+    <Compile Include="utils\pathUtils.js" />
+    <Compile Include="controllers\path\achievements.js" />
+    <Compile Include="controllers\path\businessRebate.js" />
+    <Compile Include="controllers\path\channelAnalysis.js" />
+    <Compile Include="controllers\path\coupon.js" />
+    <Compile Include="controllers\path\dataOverview.js" />
+    <Compile Include="controllers\path\market.js" />
+    <Compile Include="controllers\path\marketingAnalysis.js" />
+    <Compile Include="controllers\path\platformRebate.js" />
+    <Compile Include="controllers\path\realTime.js" />
+    <Compile Include="controllers\path\retainedAnalysis.js" />
+    <Compile Include="controllers\path\share.js" />
+    <Compile Include="controllers\path\socialAnalysis.js" />
+    <Compile Include="controllers\path\table.js" />
+    <Compile Include="controllers\path\terminal.js" />
+    <Compile Include="controllers\path\useAnalysis.js" />
+    <Compile Include="controllers\path\usersAnalysis.js" />
+    <Compile Include="controllers\path\videoStatis.js" />
+    <Compile Include="controllers\manage\achievements\index.js" />
+    <Compile Include="controllers\manage\achievements\product.js" />
+    <Compile Include="controllers\manage\achievements\trade.js" />
+    <Compile Include="controllers\manage\businessRebate\index.js" />
+    <Compile Include="controllers\manage\channelAnalysis\index.js" />
+    <Compile Include="controllers\manage\channelAnalysis\operating.js" />
+    <Compile Include="controllers\manage\coupon\index.js" />
+    <Compile Include="controllers\manage\coupon\platform.js" />
+    <Compile Include="controllers\manage\coupon\shop.js" />
+    <Compile Include="controllers\manage\dataOverview\index.js" />
+    <Compile Include="controllers\manage\dataOverview\wap.js" />
+    <Compile Include="controllers\manage\market\index.js" />
+    <Compile Include="controllers\manage\marketingAnalysis\activityFlow.js" />
+    <Compile Include="controllers\manage\marketingAnalysis\couponInfo.js" />
+    <Compile Include="controllers\manage\marketingAnalysis\index.js" />
+    <Compile Include="controllers\manage\platformRebate\index.js" />
+    <Compile Include="controllers\manage\platformRebate\individualEvent.js" />
+    <Compile Include="controllers\manage\platformRebate\inviteBusiness.js" />
+    <Compile Include="controllers\manage\platformRebate\inviteRegisterAndEnter.js" />
+    <Compile Include="controllers\manage\platformRebate\platformBasis.js" />
+    <Compile Include="controllers\manage\platformRebate\platformPromotions.js" />
+    <Compile Include="controllers\manage\realTime\index.js" />
+    <Compile Include="controllers\manage\retainedAnalysis\index.js" />
+    <Compile Include="controllers\manage\role\index.js" />
+    <Compile Include="controllers\manage\share\index.js" />
+    <Compile Include="controllers\manage\share\outer.js" />
+    <Compile Include="controllers\manage\socialAnalysis\hostData.js" />
+    <Compile Include="controllers\manage\socialAnalysis\index.js" />
+    <Compile Include="controllers\manage\socialAnalysis\index2.js" />
+    <Compile Include="controllers\manage\socialAnalysis\topicData.js" />
+    <Compile Include="controllers\manage\socialAnalysis\topicDataOperating.js" />
+    <Compile Include="controllers\manage\systemLog\index.js" />
+    <Compile Include="controllers\manage\table\index.js" />
+    <Compile Include="controllers\manage\terminal\index.js" />
+    <Compile Include="controllers\manage\terminal\network.js" />
+    <Compile Include="controllers\manage\terminal\provinces.js" />
+    <Compile Include="controllers\manage\useAnalysis\accessPage.js" />
+    <Compile Include="controllers\manage\useAnalysis\accessPageNum.js" />
+    <Compile Include="controllers\manage\useAnalysis\accessWap.js" />
+    <Compile Include="controllers\manage\useAnalysis\index.js" />
+    <Compile Include="controllers\manage\useAnalysis\useFrequency.js" />
+    <Compile Include="controllers\manage\userAnalysis\activeAccount.js" />
+    <Compile Include="controllers\manage\userAnalysis\index.js" />
+    <Compile Include="controllers\manage\userAnalysis\startUp.js" />
+    <Compile Include="controllers\manage\userAnalysis\version.js" />
+    <Compile Include="controllers\manage\users\index.js" />
+    <Compile Include="controllers\manage\videoStatis\index.js" />
+    <Compile Include="filters\achievements\index.js" />
+    <Compile Include="filters\achievements\product.bak.js" />
+    <Compile Include="filters\achievements\product.js" />
+    <Compile Include="filters\achievements\trade.js" />
+    <Compile Include="filters\businessRebate\index.js" />
+    <Compile Include="filters\channelAnalysis\index.js" />
+    <Compile Include="filters\channelAnalysis\operating.js" />
+    <Compile Include="filters\coupon\index.js" />
+    <Compile Include="filters\coupon\platform.js" />
+    <Compile Include="filters\coupon\shop.js" />
+    <Compile Include="filters\dataOverview\index.js" />
+    <Compile Include="filters\marketingAnalysis\activityFlow.js" />
+    <Compile Include="filters\marketingAnalysis\couponInfo.js" />
+    <Compile Include="filters\marketingAnalysis\index.js" />
+    <Compile Include="filters\platformRebate\index.js" />
+    <Compile Include="filters\platformRebate\individualEvent.js" />
+    <Compile Include="filters\platformRebate\inviteBusiness.js" />
+    <Compile Include="filters\platformRebate\inviteRegisterAndEnter.js" />
+    <Compile Include="filters\platformRebate\platformBasis.js" />
+    <Compile Include="filters\platformRebate\platformPromotions.js" />
+    <Compile Include="filters\realTime\index.js" />
+    <Compile Include="filters\retainedAnalysis\index.js" />
+    <Compile Include="filters\share\index.js" />
+    <Compile Include="filters\share\outer.js" />
+    <Compile Include="filters\socialAnalysis\hostData.js" />
+    <Compile Include="filters\socialAnalysis\index.js" />
+    <Compile Include="filters\socialAnalysis\index2.js" />
+    <Compile Include="filters\socialAnalysis\topicData.js" />
+    <Compile Include="filters\table\index.js" />
+    <Compile Include="filters\terminal\index.js" />
+    <Compile Include="filters\terminal\network.js" />
+    <Compile Include="filters\terminal\provinces.js" />
+    <Compile Include="filters\useAnalysis\accessPage.js" />
+    <Compile Include="filters\useAnalysis\accessPageNum.js" />
+    <Compile Include="filters\useAnalysis\accessWap.js" />
+    <Compile Include="filters\useAnalysis\index.js" />
+    <Compile Include="filters\useAnalysis\useFrequency.js" />
+    <Compile Include="filters\userAnalysis\index.js" />
+    <Compile Include="filters\videoStatis\index.js" />
+    <Content Include="static\src\css\base.css" />
+    <Content Include="static\src\css\bootstrap.min.css" />
+    <Content Include="static\src\css\common.css" />
+    <Content Include="static\src\css\datePicker.min.css" />
+    <Content Include="static\src\css\font-awesome.css" />
+    <Content Include="static\src\css\jquery-table.min.css" />
+    <Content Include="static\src\css\metisMenu.min.css" />
+    <Content Include="static\src\css\select.css" />
+    <Content Include="static\src\fonts\fontawesome-webfont.svg" />
+    <Content Include="static\src\img\404.png" />
+    <Content Include="static\src\img\loading.png" />
+    <Content Include="static\src\img\nodata.png" />
+    <Content Include="static\src\img\favico.ico" />
+    <Compile Include="static\src\js\app.js" />
+    <Compile Include="static\src\js\directive\tips.js" />
+    <Compile Include="static\src\js\dom\index.js" />
+    <Compile Include="static\src\js\filter\index.js" />
+    <Compile Include="static\src\js\lib\bootstrap.min.js" />
+    <Compile Include="static\src\js\lib\datePicker.min.js" />
+    <Compile Include="static\src\js\lib\jquery-table.min.js" />
+    <Compile Include="static\src\js\lib\jquery.min.js" />
+    <Compile Include="static\src\js\lib\metisMenu.min.js" />
+    <Compile Include="static\src\js\lib\moment.min.js" />
+    <Compile Include="static\src\js\lib\select.min.js" />
+    <Compile Include="static\src\js\lib\vue.min.js" />
+    <Compile Include="static\src\js\lib\vuex.min.js" />
+    <Compile Include="static\src\js\store\actions.js" />
+    <Compile Include="static\src\js\store\store.js" />
+    <Compile Include="static\src\js\utils\common.js" />
+    <Compile Include="static\src\js\utils\dom.js" />
+    <Compile Include="static\src\js\utils\index.js" />
+    <Content Include="views\include\404.html" />
+    <Content Include="views\include\authority.html" />
+    <Content Include="views\include\footer.html" />
+    <Content Include="views\include\header.html" />
+    <Content Include="views\include\navbar.html" />
+    <Content Include="views\include\pagination.html" />
+    <Content Include="views\login\login.html" />
+    <Content Include="views\main\index.html" />
+    <Content Include="views\panel\index.html" />
+    <Content Include="views\user\index.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="base" />
+    <Folder Include="controllers" />
+    <Folder Include="controllers\manage" />
+    <Folder Include="controllers\manage\achievements" />
+    <Folder Include="controllers\manage\businessRebate" />
+    <Folder Include="controllers\manage\channelAnalysis" />
+    <Folder Include="controllers\manage\coupon" />
+    <Folder Include="controllers\manage\dataOverview" />
+    <Folder Include="controllers\manage\market" />
+    <Folder Include="controllers\manage\marketingAnalysis" />
+    <Folder Include="controllers\manage\platformRebate" />
+    <Folder Include="controllers\manage\realTime" />
+    <Folder Include="controllers\manage\retainedAnalysis" />
+    <Folder Include="controllers\manage\role" />
+    <Folder Include="controllers\manage\share" />
+    <Folder Include="controllers\manage\socialAnalysis" />
+    <Folder Include="controllers\manage\systemLog" />
+    <Folder Include="controllers\manage\table" />
+    <Folder Include="controllers\manage\terminal" />
+    <Folder Include="controllers\manage\useAnalysis" />
+    <Folder Include="controllers\manage\userAnalysis" />
+    <Folder Include="controllers\manage\users" />
+    <Folder Include="controllers\manage\videoStatis" />
+    <Folder Include="controllers\path" />
+    <Folder Include="doc" />
+    <Folder Include="filters" />
+    <Folder Include="filters\achievements" />
+    <Folder Include="filters\businessRebate" />
+    <Folder Include="filters\channelAnalysis" />
+    <Folder Include="filters\coupon" />
+    <Folder Include="filters\dataOverview" />
+    <Folder Include="filters\marketingAnalysis" />
+    <Folder Include="filters\platformRebate" />
+    <Folder Include="filters\realTime" />
+    <Folder Include="filters\retainedAnalysis" />
+    <Folder Include="filters\share" />
+    <Folder Include="filters\socialAnalysis" />
+    <Folder Include="filters\table" />
+    <Folder Include="filters\terminal" />
+    <Folder Include="filters\useAnalysis" />
+    <Folder Include="filters\userAnalysis" />
+    <Folder Include="filters\videoStatis" />
+    <Folder Include="models" />
+    <Folder Include="node_modules\" />
+    <Folder Include="node_modules\asyncawait\" />
+    <Folder Include="node_modules\asyncawait\src\" />
+    <Folder Include="node_modules\asyncawait\src\typings\" />
+    <Folder Include="node_modules\asyncawait\src\typings\bluebird\" />
+    <Folder Include="node_modules\asyncawait\src\typings\chai\" />
+    <Folder Include="node_modules\asyncawait\src\typings\lodash\" />
+    <Folder Include="node_modules\asyncawait\src\typings\mocha\" />
+    <Folder Include="node_modules\asyncawait\src\typings\node-fibers\" />
+    <Folder Include="node_modules\asyncawait\src\typings\node\" />
+    <Folder Include="routers" />
+    <Folder Include="static" />
+    <Folder Include="static\src" />
+    <Folder Include="static\src\css" />
+    <Folder Include="static\src\fonts" />
+    <Folder Include="static\src\img" />
+    <Folder Include="static\src\js" />
+    <Folder Include="static\src\js\component" />
+    <Folder Include="static\src\js\component\common" />
+    <Folder Include="static\src\js\component\custom" />
+    <Folder Include="static\src\js\component\global" />
+    <Folder Include="static\src\js\component\main" />
+    <Folder Include="static\src\js\component\support" />
+    <Folder Include="static\src\js\directive" />
+    <Folder Include="static\src\js\dom" />
+    <Folder Include="static\src\js\filter" />
+    <Folder Include="static\src\js\lib" />
+    <Folder Include="static\src\js\store" />
+    <Folder Include="static\src\js\utils" />
+    <Folder Include="typings\" />
+    <Folder Include="typings\async\" />
+    <Folder Include="typings\axios\" />
+    <Folder Include="typings\babel-core\" />
+    <Folder Include="typings\babel-template\" />
+    <Folder Include="typings\babel-traverse\" />
+    <Folder Include="typings\babel-types\" />
+    <Folder Include="typings\babylon\" />
+    <Folder Include="typings\bluebird\" />
+    <Folder Include="typings\body-parser\" />
+    <Folder Include="typings\chalk\" />
+    <Folder Include="typings\cheerio\" />
+    <Folder Include="typings\clean-css\" />
+    <Folder Include="typings\commander\" />
+    <Folder Include="typings\cookie-session\" />
+    <Folder Include="typings\echarts\" />
+    <Folder Include="typings\ejs\" />
+    <Folder Include="typings\express-serve-static-core\" />
+    <Folder Include="typings\express\" />
+    <Folder Include="typings\form-data\" />
+    <Folder Include="typings\gulp-concat\" />
+    <Folder Include="typings\gulp-if\" />
+    <Folder Include="typings\gulp-minify-css\" />
+    <Folder Include="typings\gulp-rename\" />
+    <Folder Include="typings\gulp-rev\" />
+    <Folder Include="typings\gulp-uglify\" />
+    <Folder Include="typings\gulp-util\" />
+    <Folder Include="typings\gulp\" />
+    <Folder Include="typings\ioredis\" />
+    <Folder Include="typings\lodash\" />
+    <Folder Include="typings\log4js\" />
+    <Folder Include="typings\mime\" />
+    <Folder Include="typings\minimist\" />
+    <Folder Include="typings\moment\" />
+    <Folder Include="typings\morgan\" />
+    <Folder Include="typings\mysql\" />
+    <Folder Include="typings\node-cache\" />
+    <Folder Include="typings\node-fetch\" />
+    <Folder Include="typings\nodemailer-direct-transport\" />
+    <Folder Include="typings\nodemailer-smtp-transport\" />
+    <Folder Include="typings\nodemailer\" />
+    <Folder Include="typings\node\" />
+    <Folder Include="typings\orchestrator\" />
+    <Folder Include="typings\pdfkit\" />
+    <Folder Include="typings\q\" />
+    <Folder Include="typings\request\" />
+    <Folder Include="typings\serve-static\" />
+    <Folder Include="typings\source-map\" />
+    <Folder Include="typings\through2\" />
+    <Folder Include="typings\uglify-js\" />
+    <Folder Include="typings\validator\" />
+    <Folder Include="typings\vinyl\" />
+    <Folder Include="typings\vue-router\" />
+    <Folder Include="typings\vue\" />
+    <Folder Include="typings\webpack-stream\" />
+    <Folder Include="typings\webpack\" />
+    <Folder Include="utils" />
+    <Folder Include="views" />
+    <Folder Include="views\include" />
+    <Folder Include="views\login" />
+    <Folder Include="views\main" />
+    <Folder Include="views\panel" />
+    <Folder Include="views\user" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="node_modules\asyncawait\src\typings\bluebird\bluebird.d.ts" />
+    <TypeScriptCompile Include="node_modules\asyncawait\src\typings\bluebird\bluebird.d.ts" />
+    <TypeScriptCompile Include="node_modules\asyncawait\src\typings\chai\chai.d.ts" />
+    <TypeScriptCompile Include="node_modules\asyncawait\src\typings\chai\chai.d.ts" />
+    <TypeScriptCompile Include="node_modules\asyncawait\src\typings\lodash\lodash.d.ts" />
+    <TypeScriptCompile Include="node_modules\asyncawait\src\typings\lodash\lodash.d.ts" />
+    <TypeScriptCompile Include="node_modules\asyncawait\src\typings\mocha\mocha.d.ts" />
+    <TypeScriptCompile Include="node_modules\asyncawait\src\typings\mocha\mocha.d.ts" />
+    <TypeScriptCompile Include="node_modules\asyncawait\src\typings\node-fibers\node-fibers.d.ts" />
+    <TypeScriptCompile Include="node_modules\asyncawait\src\typings\node-fibers\node-fibers.d.ts" />
+    <TypeScriptCompile Include="node_modules\asyncawait\src\typings\node\node.d.ts" />
+    <TypeScriptCompile Include="node_modules\asyncawait\src\typings\node\node.d.ts" />
+    <TypeScriptCompile Include="typings\async\async.d.ts" />
+    <TypeScriptCompile Include="typings\async\async.d.ts" />
+    <TypeScriptCompile Include="typings\async\async.d.ts" />
+    <TypeScriptCompile Include="typings\axios\axios.d.ts" />
+    <TypeScriptCompile Include="typings\babel-core\babel-core.d.ts" />
+    <TypeScriptCompile Include="typings\babel-core\babel-core.d.ts" />
+    <TypeScriptCompile Include="typings\babel-core\babel-core.d.ts" />
+    <TypeScriptCompile Include="typings\babel-template\babel-template.d.ts" />
+    <TypeScriptCompile Include="typings\babel-template\babel-template.d.ts" />
+    <TypeScriptCompile Include="typings\babel-template\babel-template.d.ts" />
+    <TypeScriptCompile Include="typings\babel-traverse\babel-traverse.d.ts" />
+    <TypeScriptCompile Include="typings\babel-traverse\babel-traverse.d.ts" />
+    <TypeScriptCompile Include="typings\babel-traverse\babel-traverse.d.ts" />
+    <TypeScriptCompile Include="typings\babel-types\babel-types.d.ts" />
+    <TypeScriptCompile Include="typings\babel-types\babel-types.d.ts" />
+    <TypeScriptCompile Include="typings\babel-types\babel-types.d.ts" />
+    <TypeScriptCompile Include="typings\babylon\babylon.d.ts" />
+    <TypeScriptCompile Include="typings\babylon\babylon.d.ts" />
+    <TypeScriptCompile Include="typings\babylon\babylon.d.ts" />
+    <TypeScriptCompile Include="typings\bluebird\bluebird-2.0.d.ts" />
+    <TypeScriptCompile Include="typings\bluebird\bluebird-2.0.d.ts" />
+    <TypeScriptCompile Include="typings\bluebird\bluebird-2.0.d.ts" />
+    <TypeScriptCompile Include="typings\body-parser\body-parser.d.ts" />
+    <TypeScriptCompile Include="typings\body-parser\body-parser.d.ts" />
+    <TypeScriptCompile Include="typings\body-parser\body-parser.d.ts" />
+    <TypeScriptCompile Include="typings\chalk\chalk.d.ts" />
+    <TypeScriptCompile Include="typings\chalk\chalk.d.ts" />
+    <TypeScriptCompile Include="typings\chalk\chalk.d.ts" />
+    <TypeScriptCompile Include="typings\cheerio\cheerio.d.ts" />
+    <TypeScriptCompile Include="typings\clean-css\clean-css.d.ts" />
+    <TypeScriptCompile Include="typings\clean-css\clean-css.d.ts" />
+    <TypeScriptCompile Include="typings\clean-css\clean-css.d.ts" />
+    <TypeScriptCompile Include="typings\commander\commander.d.ts" />
+    <TypeScriptCompile Include="typings\cookie-session\cookie-session.d.ts" />
+    <TypeScriptCompile Include="typings\cookie-session\cookie-session.d.ts" />
+    <TypeScriptCompile Include="typings\cookie-session\cookie-session.d.ts" />
+    <TypeScriptCompile Include="typings\echarts\echarts.d.ts" />
+    <TypeScriptCompile Include="typings\echarts\echarts.d.ts" />
+    <TypeScriptCompile Include="typings\echarts\echarts.d.ts" />
+    <TypeScriptCompile Include="typings\ejs\ejs.d.ts" />
+    <TypeScriptCompile Include="typings\ejs\ejs.d.ts" />
+    <TypeScriptCompile Include="typings\ejs\ejs.d.ts" />
+    <TypeScriptCompile Include="typings\express-serve-static-core\express-serve-static-core.d.ts" />
+    <TypeScriptCompile Include="typings\express-serve-static-core\express-serve-static-core.d.ts" />
+    <TypeScriptCompile Include="typings\express-serve-static-core\express-serve-static-core.d.ts" />
+    <TypeScriptCompile Include="typings\express\express.d.ts" />
+    <TypeScriptCompile Include="typings\express\express.d.ts" />
+    <TypeScriptCompile Include="typings\express\express.d.ts" />
+    <TypeScriptCompile Include="typings\form-data\form-data.d.ts" />
+    <TypeScriptCompile Include="typings\form-data\form-data.d.ts" />
+    <TypeScriptCompile Include="typings\form-data\form-data.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-concat\gulp-concat.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-concat\gulp-concat.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-concat\gulp-concat.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-if\gulp-if.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-if\gulp-if.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-if\gulp-if.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-minify-css\gulp-minify-css.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-minify-css\gulp-minify-css.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-minify-css\gulp-minify-css.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-rename\gulp-rename.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-rename\gulp-rename.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-rename\gulp-rename.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-rev\gulp-rev.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-rev\gulp-rev.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-rev\gulp-rev.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-uglify\gulp-uglify.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-uglify\gulp-uglify.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-uglify\gulp-uglify.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-util\gulp-util.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-util\gulp-util.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-util\gulp-util.d.ts" />
+    <TypeScriptCompile Include="typings\gulp\gulp.d.ts" />
+    <TypeScriptCompile Include="typings\gulp\gulp.d.ts" />
+    <TypeScriptCompile Include="typings\gulp\gulp.d.ts" />
+    <TypeScriptCompile Include="typings\ioredis\ioredis.d.ts" />
+    <TypeScriptCompile Include="typings\ioredis\ioredis.d.ts" />
+    <TypeScriptCompile Include="typings\ioredis\ioredis.d.ts" />
+    <TypeScriptCompile Include="typings\lodash\lodash.d.ts" />
+    <TypeScriptCompile Include="typings\lodash\lodash.d.ts" />
+    <TypeScriptCompile Include="typings\lodash\lodash.d.ts" />
+    <TypeScriptCompile Include="typings\log4js\log4js.d.ts" />
+    <TypeScriptCompile Include="typings\log4js\log4js.d.ts" />
+    <TypeScriptCompile Include="typings\log4js\log4js.d.ts" />
+    <TypeScriptCompile Include="typings\mime\mime.d.ts" />
+    <TypeScriptCompile Include="typings\mime\mime.d.ts" />
+    <TypeScriptCompile Include="typings\mime\mime.d.ts" />
+    <TypeScriptCompile Include="typings\minimist\minimist.d.ts" />
+    <TypeScriptCompile Include="typings\minimist\minimist.d.ts" />
+    <TypeScriptCompile Include="typings\minimist\minimist.d.ts" />
+    <TypeScriptCompile Include="typings\moment\moment.d.ts" />
+    <TypeScriptCompile Include="typings\moment\moment.d.ts" />
+    <TypeScriptCompile Include="typings\moment\moment.d.ts" />
+    <TypeScriptCompile Include="typings\morgan\morgan.d.ts" />
+    <TypeScriptCompile Include="typings\mysql\mysql.d.ts" />
+    <TypeScriptCompile Include="typings\mysql\mysql.d.ts" />
+    <TypeScriptCompile Include="typings\mysql\mysql.d.ts" />
+    <TypeScriptCompile Include="typings\node-cache\node-cache.d.ts" />
+    <TypeScriptCompile Include="typings\node-cache\node-cache.d.ts" />
+    <TypeScriptCompile Include="typings\node-cache\node-cache.d.ts" />
+    <TypeScriptCompile Include="typings\node-fetch\node-fetch.d.ts" />
+    <TypeScriptCompile Include="typings\nodemailer-direct-transport\nodemailer-direct-transport.d.ts" />
+    <TypeScriptCompile Include="typings\nodemailer-direct-transport\nodemailer-direct-transport.d.ts" />
+    <TypeScriptCompile Include="typings\nodemailer-direct-transport\nodemailer-direct-transport.d.ts" />
+    <TypeScriptCompile Include="typings\nodemailer-smtp-transport\nodemailer-smtp-transport.d.ts" />
+    <TypeScriptCompile Include="typings\nodemailer-smtp-transport\nodemailer-smtp-transport.d.ts" />
+    <TypeScriptCompile Include="typings\nodemailer-smtp-transport\nodemailer-smtp-transport.d.ts" />
+    <TypeScriptCompile Include="typings\nodemailer\nodemailer.d.ts" />
+    <TypeScriptCompile Include="typings\nodemailer\nodemailer.d.ts" />
+    <TypeScriptCompile Include="typings\nodemailer\nodemailer.d.ts" />
+    <TypeScriptCompile Include="typings\node\node.d.ts" />
+    <TypeScriptCompile Include="typings\node\node.d.ts" />
+    <TypeScriptCompile Include="typings\node\node.d.ts" />
+    <TypeScriptCompile Include="typings\orchestrator\orchestrator.d.ts" />
+    <TypeScriptCompile Include="typings\orchestrator\orchestrator.d.ts" />
+    <TypeScriptCompile Include="typings\orchestrator\orchestrator.d.ts" />
+    <TypeScriptCompile Include="typings\pdfkit\pdfkit.d.ts" />
+    <TypeScriptCompile Include="typings\pdfkit\pdfkit.d.ts" />
+    <TypeScriptCompile Include="typings\pdfkit\pdfkit.d.ts" />
+    <TypeScriptCompile Include="typings\q\Q.d.ts" />
+    <TypeScriptCompile Include="typings\q\Q.d.ts" />
+    <TypeScriptCompile Include="typings\q\Q.d.ts" />
+    <TypeScriptCompile Include="typings\request\request.d.ts" />
+    <TypeScriptCompile Include="typings\request\request.d.ts" />
+    <TypeScriptCompile Include="typings\request\request.d.ts" />
+    <TypeScriptCompile Include="typings\serve-static\serve-static.d.ts" />
+    <TypeScriptCompile Include="typings\serve-static\serve-static.d.ts" />
+    <TypeScriptCompile Include="typings\serve-static\serve-static.d.ts" />
+    <TypeScriptCompile Include="typings\source-map\source-map.d.ts" />
+    <TypeScriptCompile Include="typings\source-map\source-map.d.ts" />
+    <TypeScriptCompile Include="typings\source-map\source-map.d.ts" />
+    <TypeScriptCompile Include="typings\through2\through2.d.ts" />
+    <TypeScriptCompile Include="typings\through2\through2.d.ts" />
+    <TypeScriptCompile Include="typings\through2\through2.d.ts" />
+    <TypeScriptCompile Include="typings\tsd.d.ts" />
+    <TypeScriptCompile Include="typings\tsd.d.ts" />
+    <TypeScriptCompile Include="typings\tsd.d.ts" />
+    <TypeScriptCompile Include="typings\uglify-js\uglify-js.d.ts" />
+    <TypeScriptCompile Include="typings\uglify-js\uglify-js.d.ts" />
+    <TypeScriptCompile Include="typings\uglify-js\uglify-js.d.ts" />
+    <TypeScriptCompile Include="typings\validator\validator.d.ts" />
+    <TypeScriptCompile Include="typings\validator\validator.d.ts" />
+    <TypeScriptCompile Include="typings\validator\validator.d.ts" />
+    <TypeScriptCompile Include="typings\vinyl\vinyl.d.ts" />
+    <TypeScriptCompile Include="typings\vinyl\vinyl.d.ts" />
+    <TypeScriptCompile Include="typings\vinyl\vinyl.d.ts" />
+    <TypeScriptCompile Include="typings\vue-router\vue-router.d.ts" />
+    <TypeScriptCompile Include="typings\vue-router\vue-router.d.ts" />
+    <TypeScriptCompile Include="typings\vue-router\vue-router.d.ts" />
+    <TypeScriptCompile Include="typings\vue\vue.d.ts" />
+    <TypeScriptCompile Include="typings\vue\vue.d.ts" />
+    <TypeScriptCompile Include="typings\vue\vue.d.ts" />
+    <TypeScriptCompile Include="typings\webpack-stream\webpack-stream.d.ts" />
+    <TypeScriptCompile Include="typings\webpack-stream\webpack-stream.d.ts" />
+    <TypeScriptCompile Include="typings\webpack-stream\webpack-stream.d.ts" />
+    <TypeScriptCompile Include="typings\webpack\webpack.d.ts" />
+    <TypeScriptCompile Include="typings\webpack\webpack.d.ts" />
+    <TypeScriptCompile Include="typings\webpack\webpack.d.ts" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <!--Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them.-->
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
+  <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:48022/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>True</UseCustomServer>
+          <CustomServerUrl>http://localhost:1337</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
+        <WebProjectProperties>
+          <StartPageUrl>
+          </StartPageUrl>
+          <StartAction>CurrentPage</StartAction>
+          <AspNetDebugging>True</AspNetDebugging>
+          <SilverlightDebugging>False</SilverlightDebugging>
+          <NativeDebugging>False</NativeDebugging>
+          <SQLDebugging>False</SQLDebugging>
+          <ExternalProgram>
+          </ExternalProgram>
+          <StartExternalURL>
+          </StartExternalURL>
+          <StartCmdLineArguments>
+          </StartCmdLineArguments>
+          <StartWorkingDirectory>
+          </StartWorkingDirectory>
+          <EnableENC>False</EnableENC>
+          <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

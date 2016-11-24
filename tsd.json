@@ -1,0 +1,174 @@
+{
+  "version": "v4",
+  "repo": "borisyankov/DefinitelyTyped",
+  "ref": "master",
+  "path": "typings",
+  "bundle": "typings/tsd.d.ts",
+  "installed": {
+    "node/node.d.ts": {
+      "commit": "f5ab2df94e1aabf0fc6d783ad01c4c4671760627"
+    },
+    "babel-core/babel-core.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "async/async.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "babel-template/babel-template.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "babel-types/babel-types.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "babylon/babylon.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "babel-traverse/babel-traverse.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "body-parser/body-parser.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "express/express.d.ts": {
+      "commit": "f5ab2df94e1aabf0fc6d783ad01c4c4671760627"
+    },
+    "gulp-concat/gulp-concat.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "serve-static/serve-static.d.ts": {
+      "commit": "f5ab2df94e1aabf0fc6d783ad01c4c4671760627"
+    },
+    "cookie-session/cookie-session.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "mime/mime.d.ts": {
+      "commit": "f5ab2df94e1aabf0fc6d783ad01c4c4671760627"
+    },
+    "express-serve-static-core/express-serve-static-core.d.ts": {
+      "commit": "f5ab2df94e1aabf0fc6d783ad01c4c4671760627"
+    },
+    "vinyl/vinyl.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "gulp-if/gulp-if.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "clean-css/clean-css.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "ejs/ejs.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "gulp-minify-css/gulp-minify-css.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "gulp-rename/gulp-rename.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "gulp-uglify/gulp-uglify.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "uglify-js/uglify-js.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "source-map/source-map.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "gulp-rev/gulp-rev.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "echarts/echarts.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "gulp-util/gulp-util.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "gulp/gulp.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "through2/through2.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "ioredis/ioredis.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "log4js/log4js.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "q/Q.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "minimist/minimist.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "node-cache/node-cache.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "mysql/mysql.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "moment/moment.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "lodash/lodash.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "nodemailer-direct-transport/nodemailer-direct-transport.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "chalk/chalk.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "nodemailer/nodemailer.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "bluebird/bluebird-2.0.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "nodemailer-smtp-transport/nodemailer-smtp-transport.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "pdfkit/pdfkit.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "validator/validator.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "vue/vue.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "request/request.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "form-data/form-data.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "webpack/webpack.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "webpack-stream/webpack-stream.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "orchestrator/orchestrator.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "vue-router/vue-router.d.ts": {
+      "commit": "084e55916674ff7128722bf72150aa55acea08d9"
+    },
+    "axios/axios.d.ts": {
+      "commit": "f5ab2df94e1aabf0fc6d783ad01c4c4671760627"
+    },
+    "node-fetch/node-fetch.d.ts": {
+      "commit": "f5ab2df94e1aabf0fc6d783ad01c4c4671760627"
+    },
+    "commander/commander.d.ts": {
+      "commit": "f5ab2df94e1aabf0fc6d783ad01c4c4671760627"
+    },
+    "cheerio/cheerio.d.ts": {
+      "commit": "f5ab2df94e1aabf0fc6d783ad01c4c4671760627"
+    },
+    "morgan/morgan.d.ts": {
+      "commit": "f5ab2df94e1aabf0fc6d783ad01c4c4671760627"
+    }
+  }
+}
