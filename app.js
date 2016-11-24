@@ -22,13 +22,10 @@ var await = require("asyncawait/await");
 // global.cluster = cluster;
 var routers = require('./routers');
 
-<<<<<<< HEAD
+
 // orm.settings.set("connection.pool", true);
 // orm.settings.set("connection.debug", true);
-=======
-orm.settings.set("connection.pool", true);
-//orm.settings.set("connection.debug", true);
->>>>>>> origin
+
 Object.keys(config).forEach(function(key) {
     app.locals[key] = config[key];
 });
