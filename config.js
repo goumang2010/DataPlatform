@@ -87,9 +87,9 @@ const Config = {
             className: "fa  fa-laptop fa-fw",
             href: "#",
             path: [
-                obj.channelAnalysis.channel(),
-                obj.channelAnalysis.market(),
-                obj.channelAnalysis.apk()
+                obj.channelAnalysis.apk(),
+                obj.channelAnalysis.market()
+                //obj.channelAnalysis.channel()
             ],
             routers: [
                 obj.channelAnalysis.channelOperating(),
@@ -169,9 +169,13 @@ const Config = {
             href: "#",
             path: [
                 obj.achievements.shop(),
+                obj.achievements.shopOverview(),
+                obj.achievements.shopRun(),
+
                 obj.achievements.product(),
                 obj.achievements.productSale(),
                 obj.achievements.trade(),
+                obj.achievements.tradePanel(),
                 obj.achievements.vshop(),
                 obj.achievements.vtrade()
             ]
