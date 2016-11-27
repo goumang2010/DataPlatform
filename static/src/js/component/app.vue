@@ -73,13 +73,13 @@
 		route: {
 			data: function(transition) {
 				var url = this.$route.path.replace(/(\?.*)/, '');
-
 				if (!window.allPageConfig.page[url]) {
 					this.$route.router.go({
 						path: '/error'
 					});
 					return;
 				}
+
 
 				$('[href="#!' + url + '"]').parent().parent().parent().addClass('active');
 				$('[href="#!' + url + '"]').parent().parent().addClass('in').attr('aria-expanded', true);
