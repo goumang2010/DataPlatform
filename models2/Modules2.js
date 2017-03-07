@@ -103,8 +103,88 @@ module.exports = {
     //交易分析-交易类目构成
     ads2_sales_category_constitute2 : {
         modelName : "SalesCategoryConstitute2"
-    }
+    },
 
+
+    //性能分析
+    ads2_performance_analysis : {
+        modelName : "PerformanceAnalysis"
+    },
+
+    //返利部分 ----------------
+    ads2_new_rebate_invite_overview : {
+        modelName : "ads2_new_rebate_invite_overview"
+    },
+    ads2_new_rebate_invite_plan_info : {
+        modelName : "ads2_new_rebate_invite_plan_info"
+    },
+
+    ads2_new_rebate_invite_trend : {
+        modelName : "ads2_new_rebate_invite_trend"
+    },
+    ads2_new_rebate_order_level_sum : {
+        modelName : "ads2_new_rebate_order_level_sum"
+    },
+    ads2_new_rebate_order_muiltiple_trend : {
+        modelName : "ads2_new_rebate_order_muiltiple_trend"
+    },
+    ads2_new_rebate_order_overview : {
+        modelName : "ads2_new_rebate_order_overview"
+    },
+    ads2_new_rebate_order_plan_info : {
+        modelName : "ads2_new_rebate_order_plan_info"
+    },
+    ads2_new_rebate_order_plantype_level_sum : {
+        modelName : "ads2_new_rebate_order_plantype_level_sum"
+    },
+
+    ads2_new_rebate_order_shop_info : {
+        modelName : "ads2_new_rebate_order_shop_info"
+    },
+    ads2_new_rebate_order_trend : {
+        modelName : "ads2_new_rebate_order_trend"
+    },
+    //返利   END --------------
+    
+    //o2o店铺
+    ads2_o2m_shop_trade_info : {
+        modelName : "ads2_o2m_shop_trade_info"
+    },
+
+    //社交三期
+    ads2_soc_total_summary : {
+        modelName : "ads2_soc_total_summary"
+    },
+    ads2_soc_topic_ordered : {
+        modelName : "ads2_soc_topic_ordered"
+    },
+    ads2_soc_topic_item : {
+        modelName : "ads2_soc_topic_item"
+    },
+    ads2_soc_group : {
+        modelName : "ads2_soc_group"
+    },
+    ads2_soc_group_topic : {
+        modelName : "ads2_soc_group_topic"
+    },
+    tbl_rt_group : {
+        modelName : "tbl_rt_group"
+    },
+    //视频
+    ads2_videoplay_overview2 : {
+        modelName : "ads2_videoplay_overview2"
+    },
+    ads2_livevideo_overview2 : {
+        modelName : "ads2_livevideo_overview2"
+    },
+
+    //IM 
+    ads2_im_bring_transaction : {
+        modelName : "ads2_im_bring_transaction"
+    },
+    ads2_im_customerservice_msg : {
+        modelName : "ads2_im_customerservice_msg"
+    }
 };
 
 

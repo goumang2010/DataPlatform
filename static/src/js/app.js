@@ -1,5 +1,6 @@
 'use strict';
 var Vue = require('Vue');
+Vue.config.debug = true;
 var $ = require('jQuery');
 var VueRouter = require('vue-router');
 Vue.use(VueRouter);
@@ -21,10 +22,6 @@ var blankApp = Vue.extend({});
 var App = require('./component/app.vue');
 var Index = require('./component/index.vue');
 
-var User = require('./component/main/user.vue');
-var Role = require('./component/main/role.vue');
-var Log = require('./component/main/log.vue');
-
 var Erro = require('./component/common/404.vue');
 
 var router = new VueRouter();
@@ -43,13 +40,18 @@ router.map({
 		component: Index
 	},
 	'/user': {
-		component: User
-	},
-	'/role': {
-		component: Role
-	},
-	'/log': {
-		component: Log
+		component: require('./component/user/index.vue'),
+		subRoutes: {
+			'/account': {
+				component: require('./component/user/account/index.vue')
+			},
+			'/role': {
+				component: require('./component/user/role/index.vue')
+			},
+			'/log': {
+				component: require('./component/user/log.vue')
+			}
+		}
 	},
 	'/error': {
 		component: Erro
@@ -66,13 +68,16 @@ router.map({
 		}
 	},
 	'/databp': {
-		component: require('./component/custom/index.vue'),
+		component: require('./component/custom/databp/index.vue'),
 		subRoutes: {
 			'/visualbp': {
 				component: require('./component/custom/databp/visualbp.vue')
 			},
 			'/bpmanage': {
 				component: require('./component/custom/databp/bpmanage.vue')
+			},
+			'/bpstats': {
+				component: require('./component/custom/databp/bpstats.vue')
 			},
 			'/heatmap': {
 				component: require('./component/custom/databp/heatmap.vue')

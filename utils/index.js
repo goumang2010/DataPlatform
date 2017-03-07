@@ -1,5 +1,40 @@
 var path = require('path');
 var config = require('./config.json');
+const validator = require('validator');
+const request = require("request");
+const Assist = require("./assist");
+const moment = require("moment");
+const style = {
+    border : {
+        left : {
+            style : "thin",
+            color : "#000000"
+        },
+        right : {
+            style : "thin",
+            color : "#000000"
+        },
+        top : {
+            style : "thin",
+            color : "#000000"
+        },
+        bottom : {
+            style : "thin",
+            color : "#000000"
+        }
+    }
+};
+const header = {
+    fill : {
+        type: 'pattern',
+        patternType: 'solid',
+        fgColor: '#FFFF33'
+    }
+};
+
+for(let key in Assist){
+    exports[key] = Assist[key];
+}
 
 exports.unique = function(data) {
     data = data || [];
@@ -180,8 +215,15 @@ exports.toFixed = function(one, two) {
     return (one / (Math.ceil(two) === 0 ? 1 : two) * 100).toFixed(2) + "%";
 };
 
+exports.toFixedLength = function(one, two, length=4) {
+    if (!two) {
+        return '--'
+    }
+    return (one / (Math.ceil(two) === 0 ? 1 : two) * 100).toFixed(length) + "%"
+}
+
 exports.percentage = function(one, two) {
-    return (one / (two === 0 ? 1 : two) * 100).toFixed(2);
+    return (one / (Math.ceil(two) === 0 ? 1 : two) * 100).toFixed(2);
 };
 
 exports.toRound = function(one, two) {
@@ -205,7 +247,8 @@ exports.ceil = function(one, two) {
 };
 
 exports.getDate = function(date){
-    return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+    let theDate = typeof date == "string" ? new Date(date) : date;
+    return theDate.getFullYear() + '-' + (theDate.getMonth() + 1) + '-' + theDate.getDate();
 };
 
 
@@ -225,7 +268,7 @@ exports.numberLeave = function(number , num){
     }
     number = parseInt(number*a);
     return number/a;
-}
+};
 
 exports.times = function(startTime, endTime, day_type) {
     var start = new Date(startTime).getTime(),
@@ -249,6 +292,37 @@ exports.times = function(startTime, endTime, day_type) {
                 new Date(new Date(year, month, 1).getTime() - 24 * 60 * 60 * 1000).getDate()) {
                 month++;
                 array.push(exports.getDate(new Date(start)));
+                start = new Date(year, month, 1).getTime() - 24 * 60 * 60 * 1000;
+            } else {
+                start = new Date(year, month, 1).getTime() - 24 * 60 * 60 * 1000;
+            }
+        }
+    }
+    return array;
+};
+
+exports.timesTwo = function(startTime, endTime, day_type) {
+    var start = new Date(startTime).getTime(),
+        end = new Date(endTime).getTime(),
+        year = new Date(start).getFullYear(),
+        month = new Date(start).getMonth() + 1,
+        array = [];
+    while(start <= end) {
+        if(day_type === '1') {
+            array.push(moment(new Date(start)).format("YYYY-MM-DD"));
+            start = start + 24 * 60 * 60 * 1000;
+        } else if(day_type === '2') {
+            if(new Date(start).getDay() === 0) {
+                array.push(moment(new Date(start)).format("YYYY-MM-DD"));
+                start = start + 7 * 24 * 60 * 60 * 1000;
+            } else {
+                start = start + 24 * 60 * 60 * 1000;
+            }
+        } else if(day_type === '3') {
+            if(new Date(start).getDate() ===
+                new Date(new Date(year, month, 1).getTime() - 24 * 60 * 60 * 1000).getDate()) {
+                month++;
+                array.push(moment(new Date(start)).format("YYYY-MM-DD"));
                 start = new Date(year, month, 1).getTime() - 24 * 60 * 60 * 1000;
             } else {
                 start = new Date(year, month, 1).getTime() - 24 * 60 * 60 * 1000;
@@ -387,7 +461,7 @@ exports.mergeCell = function(data, rows) {
 exports.isEmptyObject = function(obj){
     for(var n in obj){ return false }
     return true;
-}
+};
 
 
 /*
@@ -447,7 +521,7 @@ exports.beforeDate = function( date , num , type ){
     }
 
     return arr;
-}
+};
 
 /* 调换数组顺序 */
 exports.ArraySort = function(arr){
@@ -462,7 +536,7 @@ exports.ArraySort = function(arr){
     }else{
         return arr;
     }
-}
+};
 
 /* 商品价目对照表 */
 exports.prizeRange = {
@@ -524,7 +598,219 @@ exports.dealDivision = function(a , b , num){
     }else{
         return a / b;
     }
-}
+};
 
+exports.merge = (ws, x1, y1, x2, y2, str, _style) => {
+    let w = ws.cell(x1, y1, x2, y2, true);
+    if(typeof str === "string") {
+        w = w.string(str);
+    } else {
+        w = w.number(str);
+    }
+    if(_style) {
+        w.style(_style);
+    }
+    w.style(style);
+};
 
+exports.export = (ws, data) => {
+    for(let i = 0; i < data.length; i++) {
+        let key = data[i];
+        let x = i + 1;
+        for(let j = 0; j < key.length; j++) {
+            let y = j + 1;
+            let k = key[j];
+            if(k instanceof Array) {
+                exports.merge(ws, ...k);
+            } else if(typeof k === "string") {
+                ws.cell(x, y).string(k).style(style);
+            } else if(typeof k === "number") {
+                ws.cell(x, y).number(k).style(style);
+            } else {
+                let w = ws.cell(x, y);
+                if(typeof k.name === "string") {
+                    w = w.string(k.name);
+                } else {
+                    w = w.number(k.name);
+                }
+                w.style(k.style).style(style);
+            }
+        }
+    }
+};
+//下载无任何style
+exports.arrayToArray = (modelData, useCol = true) => {
+    const newData = [];
+    for(let item of modelData) {
+        const cols = item.cols;
+        const data = item.data;
+        const rows = item.rows;
+        if(useCol) {
+            const arr = [];
+            for(let col of cols) {
+                arr.push({
+                    name : col.caption,
+                    style : header
+                });
+            }
+            newData.push(arr);
+        }
+        for(let key of data) {
+            let a = [];
+            for(let row of rows) {
+                a.push(key[row]);
+            }
+            newData.push(a);
+        }
+        newData.push([]);
+        newData.push([]);
+    }
 
+    return newData;
+};
+
+exports.request = (req, url, ep, emitName) => {
+    request({
+        url : url,
+        headers : req.headers
+    }, (err, response, body) => {
+        body = JSON.parse(body);
+        if(body.iserro) {
+            return ep.emit("error", `${emitName} has error!!!`);
+        }
+        ep.emit(emitName, body.modelData);
+    });
+};
+
+exports.excelReport = (modelData, useCol=true) => {
+    const newData = [];
+    for(let item of modelData) {
+        const cols = item.cols;
+        const data = item.data;
+        const rows = item.rows;
+        const up = {
+            font : {
+                color : "#FF0000"
+            }
+        };
+        const down = {
+            font : {
+                color : "#00FF00"
+            }
+        };
+        const arr = [];
+        if(useCol) {
+            for(let col of cols) {
+                if(!col.noShow) {
+                    arr.push({
+                        name : col.caption,
+                        style : header
+                    });
+                }
+            }
+            newData.push(arr);
+        }
+        for(let key of data) {
+            let a = [];
+            if(validator.isDate(key.date) || key.date === "近30天平均") {
+                for(let row of rows) {
+                    if(row !== "operating") {
+                        a.push(key[row]);
+                    }
+                }
+            } else {
+                for(let row of rows) {
+                    if(row !== "operating") {
+                        const d = key[row];
+                        if(typeof d === "string") {
+                            if(+d.replace("%", "") >= 0 && d !== "--") {
+                                a.push({
+                                    name : "↑" +d,
+                                    style : up
+                                });
+                            } else if(+d.replace("%", "") <= 0 && d !== "--") {
+                                a.push({
+                                    name : "↓" + d,
+                                    style : down
+                                });
+                            } else {
+                                a.push(d);
+                            }
+                        } else {
+                            a.push(d);
+                        }
+                    }
+                }
+            }
+            newData.push(a);
+        }
+        newData.push([]);
+        newData.push([]);
+    }
+
+    return newData;
+};
+
+/* mege array */
+exports.megerArray = (result = [] , arr) => {
+    for(let item of arr){
+        if(item instanceof Array){
+            exports.megerArray(result , item);
+        }else{
+            result.push(item);
+        }
+    }
+    return result;
+};
+
+exports.globalPlatform = (type, filter_select) => {
+    let all = true;
+    let ios = filter_select[0].groups[0],
+        and = filter_select[0].groups[1],
+        pc = filter_select[0].groups[2],
+        h5 = filter_select[0].groups[3];
+    const select = {
+        title : filter_select[0].title,
+        filter_key : filter_select[0].filter_key,
+        groups : []
+    };
+    if(type[0] == "1") {
+        select.groups.push(ios);
+    } else {
+        all = false;
+    }
+    if(type[1] == "1") {
+        select.groups.push(and);
+    } else {
+        all = false;
+    }
+    if(type[3] == "1") {
+        select.groups.push(pc);
+    } else {
+        all = false;
+    }
+    if(type[4] == "1") {
+        select.groups.push(h5);
+    } else {
+        all = false;
+    }
+
+    if(all) {
+        select.groups = [{
+            key: 'all',
+            value: '全部'
+        }].concat(select.groups);
+    }
+
+    let arr = [];
+    arr.push(select);
+    for(let i = 1; i < filter_select.length; i++) {
+        arr.push(filter_select[i]);
+    }
+
+    return arr;
+};
+
+exports.moment = (date) => {
+    return moment(date).format("YYYY-MM-DD");
+};

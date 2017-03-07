@@ -7,6 +7,7 @@
 module.exports = {
     searchIndex(){
         return {
+            id : 68,
             name : "商品搜索关键指标",
             path : "/search/index",
             display : true,
@@ -26,6 +27,7 @@ module.exports = {
     },
     searchWord(){
         return {
+            id : 69,
             name : "商品搜索关键词分析",
             path : "/search/word",
             display : true,
@@ -36,20 +38,16 @@ module.exports = {
                     query_api : "/search/WordOne"
                 },
                 {
-                    type : "chart",
-                    title: "商品搜索关键词分析-来源占比",
-                    query_api : "/search/WordTwo"
-                },
-                {
                     type : "table",
                     title: "商品搜索关键词top100分析",
-                    query_api : "/search/WordThree"
+                    query_api : "/search/WordTwo"
                 }
             ]
         }
     },
     searchRecommend(){
         return {
+            id : 70,
             name : "商品推荐关键指标",
             path : "/search/recommend",
             display : true,
@@ -60,9 +58,9 @@ module.exports = {
                     query_api : "/search/recommendOne"
                 },
                 {
-                    type : "chart",
-                    title: "商品搜索推荐大盘指标趋势图",
-                    query_api : "/search/recommendTwo"
+                   type : "chart",
+                   title: "商品搜索推荐大盘指标趋势图",
+                   query_api : "/search/recommendTwo"
                 }
             ]
         }

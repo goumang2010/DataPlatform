@@ -7,6 +7,7 @@
 module.exports = {
     index() {
         return {
+            id : 66,
             name : "实时概况",
             path : "/realTime",
             display : true,

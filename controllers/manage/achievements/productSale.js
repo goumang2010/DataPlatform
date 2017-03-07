@@ -41,7 +41,6 @@ function CategoryDeal(query , level){
     return query;
 }
 
-
 function GetLevel(req , query , cb){
     req.models.ConfCategories.find({
         id : query.category_id
@@ -51,8 +50,54 @@ function GetLevel(req , query , cb){
     });
 }
 
-
-
+function globalPlatform(type) {
+    let all = true;
+    let global_platform = {
+        show: true,
+        key : "type",
+        name : "平台切换",
+        list : []
+    };
+    if(type[0] == "1") {
+        global_platform.list.push({
+            key: 'IOS',
+            name: 'IOS'
+        });
+    } else {
+        all = false;
+    }
+    if(type[1] == "1") {
+        global_platform.list.push({
+            key: 'Android',
+            name: 'Android'
+        });
+    } else {
+        all = false;
+    }
+    if(type[3] == "1") {
+        global_platform.list.push({
+            key: 'www',
+            name: 'PC'
+        });
+    } else {
+        all = false;
+    }
+    if(type[4] == "1") {
+        global_platform.list.push({
+            key: 'm',
+            name: 'H5'
+        });
+    } else {
+        all = false;
+    }
+    if(all) {
+        global_platform.list = [{
+            key: 'ALL',
+            name: '全部平台'
+        }].concat(global_platform.list);
+    }
+    return global_platform;
+}
 
 module.exports = (Router) => {
     Router = Router.get("/achievements/product22Zero_json" , function(req , res , next){
@@ -82,40 +127,25 @@ module.exports = (Router) => {
             query.dates = dates;
             return params;
         },
-        global_platform: {
-            show: true,
-            key : "type",
-            name : "平台切换（默认全部平台）",
-            list : [{
-                key: 'ALL',
-                name: '全部平台'
-            },{
-                key: 'Android',
-                name: 'Android'
-            },{
-                key: 'IOS',
-                name: 'IOS'
-            },{
-                key: 'm',
-                name: 'H5'
-            },{
-                key: 'www',
-                name: 'PC'
-            }]
+        global_platform_filter(req) {
+            this.global_platform = globalPlatform(req.session.userInfo.type["34"]);
         },
-        filter_select : [
-            {
-                title : "类型",
-                filter_key : "filter_key",
-                groups: [{
-                    key: "ITEM",
-                    value: "ITEM"
-                },{
-                    key: "SKU",
-                    value: "SKU"
-                }]
-            }
-        ],
+        selectFilter(req, cb) {
+            const filter_select = [
+                {
+                    title : "类型",
+                    filter_key : "filter_key",
+                    groups: [{
+                        key: "ITEM",
+                        value: "ITEM"
+                    },{
+                        key: "SKU",
+                        value: "SKU"
+                    }]
+                }
+            ];
+            cb(null, filter_select);
+        },
         cols : [
             [{
                 comment : "/",
@@ -149,7 +179,7 @@ module.exports = (Router) => {
         ],
         fixedParams(req , query , cb){
             if(!query.type){
-                query.type = "ALL";
+                query.type = this.global_platform.list[0].key;
             }
 
             if(!query.category_id){
@@ -162,13 +192,14 @@ module.exports = (Router) => {
             return filter.productSaleOne(data, query);
         }
     });
-
-
     //商品销售趋势
     Router = new api(Router,{
         router : "/achievements/productSaleTwo",
         modelName : ["ItemRunSales"],
         platform : false,
+        global_platform_filter(req) {
+            this.global_platform = globalPlatform(req.session.userInfo.type["34"]);
+        },
         selectFilter(req , cb){
             var obj = {
                     title : "类型选择",
@@ -223,7 +254,7 @@ module.exports = (Router) => {
         },
         fixedParams(req , query , cb){
             if(!query.type){
-                query.type = "ALL";
+                query.type = this.global_platform.list[0].key;
             }
 
             if(!query.category_id){
@@ -236,10 +267,6 @@ module.exports = (Router) => {
             return filter.productSaleTwo(data, query, dates);
         }
     });
-
-
-
-
     //商品销售明细
     Router = new api(Router,{
         router : "/achievements/productSaleThree",
@@ -247,23 +274,29 @@ module.exports = (Router) => {
         platform : false,
         excel_export : true,
         paging : [true],
+        global_platform_filter(req) {
+            this.global_platform = globalPlatform(req.session.userInfo.type["34"]);
+        },
+        selectFilter(req, cb) {
+            const filter_select = [
+                {
+                    title : "类型",
+                    filter_key : "filter_key",
+                    groups: [{
+                        key: "ITEM",
+                        value: "ITEM"
+                    },{
+                        key: "SKU",
+                        value: "SKU"
+                    }]
+                }
+            ];
+            cb(null, filter_select);
+        },
         flexible_btn : [{
             content: '<a href="javascript:void(0)">导出</a>',
             preMethods: ['excel_export']
         }],
-        filter_select : [
-            {
-                title : "类型",
-                filter_key : "filter_key",
-                groups: [{
-                    key: "ITEM",
-                    value: "ITEM"
-                },{
-                    key: "SKU",
-                    value: "SKU"
-                }]
-            }
-        ],
         order : ["-date"],
         cols : [
             [{
@@ -304,7 +337,7 @@ module.exports = (Router) => {
         ],
         fixedParams(req , query , cb){
             if(!query.type){
-                query.type = "ALL";
+                query.type = this.global_platform.list[0].key;
             }
 
             if(!query.category_id){
@@ -317,7 +350,6 @@ module.exports = (Router) => {
             return filter.productSaleThree(data, query);
         }
     });
-
     //商品排行TOP100
     Router = new api(Router,{
         router : "/achievements/productSaleFour",
@@ -349,7 +381,7 @@ module.exports = (Router) => {
         ],
         fixedParams(req , query , cb){
             if(!query.type){
-                query.type = "ALL";
+                query.type = this.global_platform.list[0].key;
             }
 
             if(!query.category_id){
@@ -460,7 +492,6 @@ module.exports = (Router) => {
             return filter.productSaleFour(data, query);
         }
     });
-
 
     return Router;
 };

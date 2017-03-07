@@ -27,11 +27,12 @@
 									<td>{{item.name}}</td>
 									<td>{{item.date | Date 'yyyy-MM-dd hh:mm:ss'}}</td>
 									<td>{{item.remark}}</td>
-									<td>
+									<td style="width: 270px">
 										<ul>
-											<li v-show="item.status"><a @click="modifyRole(item.id, item.limited, item.export, item.name, item.remark)" class="btn btn-default" href="javascript:void(0)">修改<i class="fa fa-pencil-square-o"></i></a></li>
+											<li v-show="item.status"><a @click="modifyRole(item.id, item.limited, item.export, item.name, item.remark, item.sub_pages, item.type)" class="btn btn-default" href="javascript:void(0)">修改<i class="fa fa-pencil-square-o"></i></a></li>
 											<li v-show="item.status"><a @click="forbidden(item.id, item.name)" class="btn btn-default" href="javascript:void(0)">禁用<i class="fa fa-remove"></i></a></li>
 											<li v-show="!item.status"><a @click="startUsing(item.id, item.name)" class="btn btn-default" href="javascript:void(0)">启用<i class="fa fa-check-square-o"></i></a></li>
+											<li v-show="item.status"><a @click="modifyUser(item.name, item.limited, item.export, item.sub_pages, item.type)" class="btn btn-default" href="javascript:void(0)">更新账户<i class="fa fa-pencil-square-o"></i></a></li>
 										</ul>
 									</td>
 								</tr>
@@ -69,7 +70,7 @@
 							</div>
 						</div>
 					</form>
-	            	<m-limit-list :id="id" :limited="limited" :export-limit="exportLimit"></m-limit-list>
+	            	<m-limit-list v-ref:limitlist :id="id" :limited="limited" :sub-pages="subPages" :type="type" :export-limit="exportLimit"></m-limit-list>
 	            </div>
 	            <div class="modal-footer">
 	                <button type="button" class="btn default" data-dismiss="modal" @click="apply()">确定</button>
@@ -78,10 +79,20 @@
 	        </div>
 	    </div>
 	</div>
+	<m-account :modal.sync="account" :loading.sync="loading" :type="type"></m-account>
 	<m-confirm></m-confirm>
 </template>
 
-<style>
+<style scoped>
+.user_table ul>li{
+	display: inline-block;
+}
+.user_table td, .user_table th {
+	min-width: 120px;
+}
+.user_table td:nth-child(1),.user_table th:nth-child(1) {
+	max-width: 40px;
+}
 .add_role{
 	position: absolute;
 	right: 10px;
@@ -113,19 +124,20 @@ var Vue = require('Vue');
 
 var $ = require('jQuery');
 
-var Pagination = require('../common/pagination.vue');
+var Pagination = require('../../common/pagination.vue');
 
-var UserVm = null;
+var store = require('store');
+var actions = require('actions');
 
-var store = require('../../store/store.js');
-var actions = require('../../store/actions.js');
+var Loading = require('common/loading.vue');
+var Alert = require('common/alert.vue');
 
-var Loading = require('../common/loading.vue');
-var Alert = require('../common/alert.vue');
+var LimitList = require('common/limitList.vue');
 
-var LimitList = require('../common/limitList.vue');
+var Confirm = require('common/confirm.vue');
 
-var Confirm = require('../common/confirm.vue');
+var Account = require('./updateAccount.vue');
+
 
 var Role = Vue.extend({
 	name: 'Role',
@@ -136,12 +148,20 @@ var Role = Vue.extend({
 				totalItems: 30,     // 总条数
 				itemsPerPage: 10,    // 每页条数
 				pagesLength: 5,     // 显示几页( 1,2,3 / 1,2,3,4,5)
-				onChange: function() {
+				onChange: () => {
 					// 回调
-					UserVm.createTableBySearchStr();
+					this.createTableBySearchStr();
 				}
 			},
 			roleListData: null,
+			account: {
+				show: false,
+				title: '更新账户',
+				rolename: null,
+				limited: null,
+				exportLimit: null,
+				subPages: null
+			},
 			loading: {
 				show: true,
                 noLoaded: 0
@@ -152,11 +172,14 @@ var Role = Vue.extend({
 			},
 			id: null,
 			limited: {},
+			subPages: {},
+			type: {},
 			exportLimit: {},
 			modifyName: '',
 			modifyRemark: '',
 			modifyType: null,
 			modifyLimited: {},
+			modifySubPages: {},
 			modifyExportLimited: {}
 		}
 	},
@@ -174,7 +197,8 @@ var Role = Vue.extend({
 		'm-loading': Loading,
 		'm-alert': Alert,
 		'm-limit-list': LimitList,
-		'm-confirm': Confirm
+		'm-confirm': Confirm,
+		'm-account': Account
 	},
 	created: function(){
 		this.createTableBySearchStr();
@@ -199,21 +223,32 @@ var Role = Vue.extend({
 		addRole: function(){
 			this.exportLimit = {};
 			this.limited = {};
+			this.subPages = {};
 			this.modal.show = true;
 			this.modal.title = '新增角色';
 			this.modifyRemark = '';
 			this.modifyName = '';
 			this.modifyType = 'add';
 		},
-		modifyRole: function(id, limited, exportLimit, name, remark){
+		modifyRole: function(id, limited, exportLimit, name, remark, subPages, type){
 			this.id = id;
-			this.exportLimit = JSON.parse(exportLimit);
-			this.limited = JSON.parse(limited);
+			this.exportLimit = JSON.parse(exportLimit || '{}') || {};
+			this.limited = JSON.parse(limited || '{}') || {};
+			this.subPages = JSON.parse(subPages || '{}') || {};
+			this.type = JSON.parse(type || '{}') || {};
 			this.modal.show = true;
 			this.modal.title = '修改角色';
 			this.modifyRemark = remark;
 			this.modifyName = name;
 			this.modifyType = 'modify';
+		},
+		modifyUser(name, limited, exportLimit, subPages, type) {
+			this.account.rolename = name;
+			this.account.exportLimit = exportLimit;
+			this.account.limited = limited;
+			this.account.subPages = subPages;
+			this.type = JSON.parse(type || '{}');
+			this.account.show = true;
 		},
 		apply: function(){
 			var _this = this;
@@ -225,17 +260,43 @@ var Role = Vue.extend({
 				})
 				return;
 			}
+			for(var item in _this.modifyLimited){
+				if(_this.modifyLimited[item].length === 0){
+					Vue.delete(_this.modifyLimited, item);
+					Vue.delete(_this.modifySubPages, item);
+				}
+			}
+			for(var item in _this.modifyExportLimited){
+				if(_this.modifyExportLimited[item].length === 0){
+					Vue.delete(_this.modifyExportLimited, item);
+				}
+			}
+
+			// 平台权限
+			let limitlist = this.$refs.limitlist;
+			let config = {}
+			function parseObject(obj) {
+				for (let key of Object.keys(obj)) {
+						let item = obj[key]
+						if (typeof item === 'object') {
+							parseObject(item)
+						} else if (key && key !== 'undefined' && item && item !== 'undefined') {
+							config[key] = item
+						}
+					}
+			}
+			_this.$set('type', config)
+			
+			if (limitlist.platformPermission3) {
+				parseObject(limitlist.platformPermission3)
+			}
+			// 相同页面的情况下，二级目录覆盖三级目录
+			if (limitlist.platformPermission2) {
+				parseObject(limitlist.platformPermission2)
+			}
+
 			if(this.modifyType === 'modify'){
-				for(var item in _this.modifyLimited){
-					if(_this.modifyLimited[item].length === 0){
-						Vue.delete(_this.modifyLimited, item);
-					}
-				}
-				for(var item in _this.modifyExportLimited){
-					if(_this.modifyExportLimited[item].length === 0){
-						Vue.delete(_this.modifyExportLimited, item);
-					}
-				}
+
 				$.ajax({
 					url: '/role/update',
 					type: 'post',
@@ -244,7 +305,9 @@ var Role = Vue.extend({
 						name: _this.modifyName,
 						remark: _this.modifyRemark,
 						limited: JSON.stringify(_this.modifyLimited),
-						export: JSON.stringify(_this.modifyExportLimited)
+						sub_pages: JSON.stringify(_this.modifySubPages),
+						export: JSON.stringify(_this.modifyExportLimited),
+						type: JSON.stringify(_this.type)
 					},
 					success: function(data){
 						if(!data.success){
@@ -272,7 +335,9 @@ var Role = Vue.extend({
 						name: _this.modifyName,
 						remark: _this.modifyRemark,
 						limited: JSON.stringify(_this.modifyLimited),
-						export: JSON.stringify(_this.modifyExportLimited)
+						sub_pages: JSON.stringify(_this.modifySubPages),
+						export: JSON.stringify(_this.modifyExportLimited),
+						type: JSON.stringify(_this.type)
 					},
 					success: function(data){
 						if(!data.success){
@@ -351,6 +416,7 @@ var Role = Vue.extend({
 			this.modal.show = false;
 			this.id = null;
 			this.limited = {};
+			this.subPages = {};
 			this.exportLimit = {};
 			this.modifyName = '';
 			this.modifyRemark = '';
@@ -362,6 +428,9 @@ var Role = Vue.extend({
 	events: {
 		borcastLimit: function(limit){
 			this.modifyLimited = limit
+		},
+		borcastSubPages: function(subPages) {
+			this.modifySubPages = subPages;
 		},
 		borcastExportLimit: function(limit){
 			this.modifyExportLimited = limit;

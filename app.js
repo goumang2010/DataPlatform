@@ -5,9 +5,12 @@
  */
 var ejs = require('ejs');
 var express = require('express');
-var session = require('cookie-session');
+// var session = require('cookie-session');
+var session = require("express-session");
+var JsonStore = require('express-session-json')(session);
+var cookieParse = require("cookie-parser");
 var lactate = require('lactate');
-var config = require('./config');
+var config = require('./config/config');
 var bodyParser = require('body-parser');
 var flash = require('flashify');
 var mysql = require('./models2/mysql');
@@ -21,27 +24,32 @@ var await = require("asyncawait/await");
 // var cluster = new redis.Cluster(redisInfo[redisConfig]);
 // global.cluster = cluster;
 var routers = require('./routers');
+var log4js       = require("./log");
 
 
-// orm.settings.set("connection.pool", true);
+
+
+orm.settings.set("connection.pool", true);
 // orm.settings.set("connection.debug", true);
-
 Object.keys(config).forEach(function(key) {
     app.locals[key] = config[key];
 });
-
 
 // 测试使用 
 // var logger = require("morgan");
 // app.use(logger('dev'));
 
-app.use(function(req, res, next) {
-    if (req.headers['user-agent'].indexOf('Chrome') === -1) {
-        res.send('请使用谷歌浏览器');
-    } else {
-        next();
-    }
-});
+/* 日志配置，启用 */
+log4js.configure();
+app.use(log4js.useLog());
+
+// app.use(function(req, res, next) {
+//     if (req.headers['user-agent'].indexOf('Chrome') === -1) {
+//         res.send('请使用谷歌浏览器');
+//     } else {
+//         next();
+//     }
+// });
 
 app.engine('html', ejs.renderFile);
 app.set('view engine', 'html');
@@ -56,9 +64,13 @@ app.use(bodyParser.json());
 
 app.set('trust proxy', 1);
 
+app.use(cookieParse());
 app.use(session({
     name: 'DataPlatform',
-    secret: 'DataPlatform'
+    secret: 'DataPlatform',
+    resave : true,
+    saveUninitialized : true,
+    store : new JsonStore()
 }));
 
 app.use(flash);
@@ -99,11 +111,14 @@ app.use((err, req, res, next) => {
     }
 });
 
-app.use((req, res, next) => {
-    res.redirect("/");
-});
+if(process.env.NODE_ENV != "development"){
+    app.use((req, res, next) => {
+        res.redirect("/");
+    });
+}
+    
 
 app.listen(7879 , function(){
-    console.log("启动成功");
+    console.log("启动成功" , new Date().toLocaleTimeString());
 });
 

@@ -137,7 +137,8 @@ var Chart = Vue.extend({
 			initEd: false,
 			chartData: [],
 			chartHeight: 400,
-			shouldHalfWidth: {}
+			shouldHalfWidth: {},
+			xhr: null
 		};
 	},
 	vuex: {
@@ -156,7 +157,7 @@ var Chart = Vue.extend({
 		checkIsChart: function() {
 			return this.currentData.type.match(/chart/i) !== null;
 		},
-		fetchData: function(cb, errcb) {
+		fetchData: function(cb, errcb, abortcb) {
 			var _this = this;
 			if (_this.resultArgvs.forceChange) {
 				delete _this.resultArgvs.forceChange;
@@ -165,7 +166,10 @@ var Chart = Vue.extend({
 				cb && cb(this.defaultData);
 				return;
 			}
-			$.ajax({
+			if (this.xhr) {
+				this.xhr.abort();
+			}
+			this.xhr = $.ajax({
 				url: _this.currentData.query_api + '_json',
 				type: 'get',
 				data: _this.resultArgvs,
@@ -185,10 +189,14 @@ var Chart = Vue.extend({
 					if (status === 'timeout') {
 						errcb && errcb();
 					};
+					if (status === 'abort') {
+						abortcb && abortcb();
+					};
 				}
 			});
+			
 		},
-		rinseData: function(chartType, data, map, config) {
+		rinseData: function(chartType, data, map, config, markArea) {
 			var options = $.extend(true, {}, chartDataModel);
 			var xAxis = [];
 			var series = [];
@@ -218,13 +226,18 @@ var Chart = Vue.extend({
 				if (chartType === 'funnel') {
 					_curr = Object.assign(funnelDefaultSeries, _currentObj);
 				}
+				if (chartType === 'line') {
+					if (markArea) {
+						_curr.markArea = markArea;
+					}
+				}
 				series.push(_curr);
 			}
 
-			if (legend.length > 10 || chartType === 'pie') {
-				options.legend.orient = 'vertical';
-				options.legend.left = 0;
-			}
+			// if (legend.length > 10 || chartType === 'pie') {
+			// 	options.legend.orient = 'vertical';
+			// 	options.legend.left = 0;
+			// }
 			options.legend.data = legend;
 			options.xAxis.data = xAxis;
 			options.series = series;
@@ -260,6 +273,16 @@ var Chart = Vue.extend({
 		                }
 		            };
 	            }
+			}
+
+			if (chartType === 'bar' && config.stack) {
+				options.series.forEach(x => {
+					x.label = {
+						normal: {
+							show: true
+						}
+					}
+				})
 			}
 
 			if (chartType === 'map') {
@@ -331,7 +354,7 @@ var Chart = Vue.extend({
 								_this.shouldHalfWidth[domIndex] = true;
 								_this.shouldHalfWidth[domIndex + 1] = true;
 							}
-							var chartOptions = _this.rinseData(item.type, item.data, item.map, item.config);
+							var chartOptions = _this.rinseData(item.type, item.data, item.map, item.config, item.markArea);
 							setTimeout(function() {
 								if (chartOptions.series.length && chartOptions.series[0].data.length) {
 									var Chart = echarts.init($('#chart_' + _this.index).find('.chart_con').eq(domIndex)[0]);
@@ -361,6 +384,11 @@ var Chart = Vue.extend({
 							msg: '查询超时',
 							type: 'danger'
 						});
+					}, function() {
+						_this.loading.noLoaded -= 1;
+						if (_this.loading.noLoaded === 0) {
+							_this.loading.show = false;
+						}
 					});
 				}
 			},

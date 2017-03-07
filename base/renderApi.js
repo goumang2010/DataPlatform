@@ -6,7 +6,7 @@
 var utils = require("../utils"),
     _ = require("lodash"),
     cache = require("../utils/cache"),
-    config = require("../config"),
+    config = require("../config/config"),
     cacheTime = 1;
 
 function renderApi(Router, options) {
@@ -68,18 +68,30 @@ renderApi.prototype = {
     },
     _renderData(req, res, dataParams) {
         var pageAll = {},
-            page = {};
-            // limited = req.session.userInfo.limited;
-            // console.log(config.limit);
+            page = {},
+            limited = req.session.userInfo.limited,
+            sub_pages = req.session.userInfo.sub_pages;
         for(var key in config.limit) {
             var limit = config.limit[key];
-            //if(limited[key]) {
-                for(var value of limit.path) {
-                    var path = limit.path[value];
+            if(limited[key]) {
+                let obj = {};
+                for(let k of limit.path) {
+                    obj[k.id] = k;
+                }
+                for(var value of limited[key]) {
+                    var path = obj[value];
                     if(path) {
+                        let userSubs;
+                        let subPages = path.subPages || [] ;
+                        sub_pages && (userSubs = sub_pages[key]) && (userSubs = userSubs[value]);
+                        userSubs = userSubs || [];
+                        let banSubPages = subPages.filter(x => !userSubs.includes(x.id.toString()));
                         page[path.path] = {
-                            id: key,
+                            id: path.id.toString(),
+                            router: false,
+                            f_id: key,
                             pageTitle : path.name,
+                            banSubPages,
                             defaultData : path.defaultData
                         };
                     }
@@ -87,7 +99,9 @@ renderApi.prototype = {
                 if(limit.routers) {
                     for(var k of limit.routers) {
                         page[k.path] = {
-                            id: key,
+                            id: k.id && k.id.toString(),
+                            router: true,
+                            f_id: key,
                             pageTitle : k.name,
                             defaultData : k.defaultData
                         };
@@ -96,6 +110,7 @@ renderApi.prototype = {
            // }
             if(limit.display) {
                 pageAll[key] = {
+                    id : limit.id,
                     name : limit.name,
                     path : limit.path
                 };

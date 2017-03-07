@@ -1,0 +1,99 @@
+{
+    "1481187080040": {
+        "modelName": [
+            "PerformanceAnalysis"
+        ],
+        "date_picker": true,
+        "order": [
+            "-date"
+        ],
+        "platform": false,
+        "router": "/performance/error_One",
+        "toggle": {
+            "show": true
+        },
+        "global_platform_filter" : "performance_02_f_f",
+        "rows": [
+            [
+                "date",
+                "error_num",
+                "effect_user_num",
+                "effect_user_num_lv"
+            ]
+        ],
+        "cols": [
+            [
+                {
+                    "caption": "日期",
+                    "type": "date"
+                },
+                {
+                    "caption": "总错误数",
+                    "type": "number"
+                },
+                {
+                    "caption": "影响用户数",
+                    "type": "number"
+                },
+                {
+                    "caption": "影响用户率",
+                    "type": "string"
+                }
+            ]
+        ],
+        "params": "performance_01",
+        "filter": "performance_01_f"
+    },
+    "1481265531352": {
+        "modelName": [
+            "PerformanceAnalysis"
+        ],
+        "params": "performance_02",
+        "filter": "performance_02_f",
+        "date_picker": true,
+        "order": [
+            "-date"
+        ],
+        "global_platform_filter" : "performance_02_f_f",
+        "platform": false,
+        "router": "/performance/error_Two",
+        "rows": [
+            [
+                "error_status",
+                "error_name",
+                "error_num",
+                "error_num_lv",
+                "effect_user_num",
+                "effect_user_num_lv"
+            ]
+        ],
+        "cols": [
+            [
+                {
+                    "caption": "错误代码",
+                    "type": "number"
+                },
+                {
+                    "caption": "错误名称",
+                    "type": "string"
+                },
+                {
+                    "caption": "错误次数",
+                    "type": "number"
+                },
+                {
+                    "caption": "错误占比",
+                    "type": "string"
+                },
+                {
+                    "caption": "影响用户数",
+                    "type": "number"
+                },
+                {
+                    "caption": "影响用户率",
+                    "type": "string"
+                }
+            ]
+        ]
+    }
+}

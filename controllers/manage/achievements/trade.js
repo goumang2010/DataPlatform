@@ -10,37 +10,50 @@
 
 var api = require("../../../base/main"),
     filter = require("../../../filters/achievements/f_trade");
+let orm = require("orm");
+
+function globalPlatform(type) {
+    let all = true;
+    let global_platform = {
+        show: true,
+        key : "type",
+        name : "平台选择",
+        list : []
+    };
+    if(type[2] == "1") {
+        global_platform.list.push({
+            key: "app",
+            name: "APP"
+        });
+    } else {
+        all = false;
+    }
+    if(type[3] == "1") {
+        global_platform.list.push({
+            key: "pc",
+            name: "PC"
+        });
+    } else {
+        all = false;
+    }
+    if(type[4] == "1") {
+        global_platform.list.push({
+            key: "wap",
+            name: "H5"
+        });
+    } else {
+        all = false;
+    }
+    if(all) {
+        global_platform.list = [{
+            key: "ALL",
+            name: "全部平台"
+        }].concat(global_platform.list);
+    }
+    return global_platform;
+}
 
 module.exports = (Router) => {
-
-    Router = Router.get("/achievements/tradeZero_json" , function(req , res , next){
-
-        res.json({
-            code: 200,
-            modelData: [],
-            components: {
-                filter_select: [{
-                    title: "平台选择",
-                    filter_key: "type",
-                    groups: [{
-                        key: "ALL",
-                        value: "全部平台"
-                    }, {
-                        key: "app",
-                        value: "APP"
-                    }, {
-                        key: "wap",
-                        value: "WAP"
-                    }, {
-                        key: "pc",
-                        value: "PC"
-                    }]
-                }]
-            }
-        });
-    });
-
-
 
     //交易总览
     Router = new api(Router, {
@@ -65,9 +78,12 @@ module.exports = (Router) => {
                 name: 'PC'
             }]
         },*/
+        global_platform_filter(req) {
+            this.global_platform = globalPlatform(req.session.userInfo.type["35"]);
+        },
         params(query, params, sendData) {
             if (!query.type) {
-                params.type = "ALL";
+                params.type = this.global_platform.list[0].key;
             }
             return params;
         },
@@ -159,8 +175,11 @@ module.exports = (Router) => {
         router: "/achievements/tradeTwo",
         modelName: ["SalesOverview2"],
         platform: false,
-        toggle: true,
+        toggle: {
+            show : true
+        },
         paging: [true],
+        order: ["-date"],
         filter_select: [{
             title: '指标选择(图表使用)',
             filter_key: 'filter_key',
@@ -170,7 +189,7 @@ module.exports = (Router) => {
                 { key: 'order_product_num', value: '下单商品件数' },
                 { key: 'pay_product', value: '支付商品数' },
                 { key: 'pay_product_num', value: '支付商品件数' },
-                { key: 'order_num', value: '下单金额' },
+                { key: 'order_num', value: '下单总量' },
                 { key: 'pay_num', value: '支付订单量' },
                 { key: 'pay_sum', value: '支付金额' },
                 { key: 'order_user', value: '下单人数' },
@@ -180,9 +199,12 @@ module.exports = (Router) => {
                 { key: 'plat_couple_use_sum', value: '平台优惠券使额' }
             ]
         }],
+        global_platform_filter(req) {
+            this.global_platform = globalPlatform(req.session.userInfo.type["35"]);
+        },
         params(query, params, sendData) {
             if (!query.type) {
-                params.type = "ALL";
+                params.type = this.global_platform.list[0].key;
             }
             return params;
         },
@@ -200,9 +222,11 @@ module.exports = (Router) => {
         date_picker_data: 1,
         paging: [true],
         order: ["-date"],
-        toggle: true,
+        toggle: {
+            show : true
+        },
         filter_select: [{
-            title: '指标选择',
+            title: '指标选择(图表使用)',
             filter_key: 'filter_key',
             groups: [{
                 key: 'pay_num',
@@ -227,9 +251,12 @@ module.exports = (Router) => {
                 value: '客单价'
             }]
         }],
+        global_platform_filter(req) {
+            this.global_platform = globalPlatform(req.session.userInfo.type["35"]);
+        },
         params(query, params, sendData) {
             if (!query.type) {
-                params.type = "ALL";
+                params.type = this.global_platform.list[0].key;
             }
             return params;
         },
@@ -289,14 +316,18 @@ module.exports = (Router) => {
         date_picker_data: 1,
         platform: false,
         paging: [true],
+        sum : ["pay_sum"],
         /*excel_export : true,
         flexible_btn : [{
             content: '<a href="javascript:void(0)">导出</a>',
             preMethods: ['excel_export']
         }],*/
+        global_platform_filter(req) {
+            this.global_platform = globalPlatform(req.session.userInfo.type["35"]);
+        },
         params(query, params, sendData) {
             if (!query.type) {
-                params.type = "ALL";
+                params.type = this.global_platform.list[0].key;
             }
             return params;
         },
@@ -332,7 +363,7 @@ module.exports = (Router) => {
                     }
                 });
             } else {
-                query.category_id_1 = "ALL";
+                query.category_id_1 = orm.not_in(["ALL"]);
                 query.category_id_2 = "ALL";
                 query.category_id_3 = "ALL";
                 query.category_id_4 = "ALL";
@@ -342,7 +373,7 @@ module.exports = (Router) => {
         },
         level_select: true,
         level_select_name: "category_id",
-        level_select_url: "/api/categories",
+        level_select_url: "/api/categories?level=2",
         filter(data, query, dates) {
             return filter.tradeFour(data, query, dates);
         },

@@ -16,8 +16,9 @@ module.exports = (Router) => {
         platform : false,
         procedure : [{
             aggregate : "params",
-            sum : ["active_uv", "active_pv", "register", "coupon_get_num",
-                "coupon_use_num", "order_num", "order_num_money",
+            sum : ["active_uv", "active_pv", "register",
+                //"coupon_get_num", "coupon_use_num",
+                "order_num", "order_num_money",
                 "pay_num", "pay_num_money", "return_num", "return_num_money"],
             get : ""
         }],
@@ -70,10 +71,7 @@ module.exports = (Router) => {
         modelName : ["CamCamlistActive", "Activity"],
         platform : false,
         secondParams(query, params, data) {
-            let ids = _.uniq(_.pluck(data.first.data[0], "active_no"));
-            return {
-                activity_id : ids
-            };
+            return {};
         },
         filter(data, query, dates) {
             return filter.allTwo(data, query, dates);
@@ -191,9 +189,10 @@ module.exports = (Router) => {
         },
         rows : [
             ["name", "active_no", "date", "active_pv", "active_uv",
-                "register", "share_button_pv", "share_button_uv",
-                "coupon_get_num", "rate",
-                //"order_num",
+                "register", "share_button_uv", "share_button_pv",
+                //"coupon_get_num",
+                "rate",
+                "order_num",
                 "order_num_money", "pay_num",
                 "pay_user", "pay_num_money", "return_num",
                 "return_user", "return_num_money",

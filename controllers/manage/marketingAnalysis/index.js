@@ -29,14 +29,14 @@ module.exports = (Router) => {
                     if(channel[key.channel_type_code]) {
                         channel[key.channel_type_code].options.push({
                             text : key.channel_name,
-                            value : key.channel_type_code + key.channel_code
+                            value : key.channel_id
                         });
                     } else {
                         channel[key.channel_type_code] = {
                             name : key.channel_type,
                             options : [{
                                 text : key.channel_name,
-                                value : key.channel_type_code + key.channel_code
+                                value : key.channel_id
                             }]
                         };
                     }
@@ -456,7 +456,7 @@ module.exports = (Router) => {
                             _findRedis(query.filter_key, {
                                 now : now,
                                 old : old
-                            }, hour, []), query.day
+                            }, hour, []), query.day, query.filter_key
                         ), modules);
                     }
                 } catch(err) {
@@ -521,23 +521,23 @@ module.exports = (Router) => {
         }
 
         if(channels.length === 0) {
-            for(let i = 0; i < +hour + 1; i++) {
-                    if(i >= 10) {
-                        data[`${i}:00-${i+1}:00`] = {
-                            now : await (_find(`${key + date.now + i}:${end}`)) || 0,
-                            old : await (_find(`${key + date.old + i}:${end}`)) || 0
-                        };
-                    } else {
-                        data[`0${i}:00-${i + 1 === 10 ? 10 : "0" + (i + 1)}:00`] = {
-                            now : await (_find(`${key + date.now}0${i}:${end}`)) || 0,
-                            old : await (_find(`${key + date.old}0${i}:${end}`)) || 0
-                        };
-                    }
+            for(let i = 0; i < 24; i++) {
+                if(i >= 10) {
+                    data[`${i}:00-${i+1}:00`] = {
+                        now : await (_find(`${key + date.now + i}:${end}`)) || 0,
+                        old : await (_find(`${key + date.old + i}:${end}`)) || 0
+                    };
+                } else {
+                    data[`0${i}:00-${i + 1 === 10 ? 10 : "0" + (i + 1)}:00`] = {
+                        now : await (_find(`${key + date.now}0${i}:${end}`)) || 0,
+                        old : await (_find(`${key + date.old}0${i}:${end}`)) || 0
+                    };
                 }
+            }
         } else {
             if(end === "counts" || end === "amount") {
                 for(let channel of channels) {
-                    for(let i = 0; i < +hour + 1; i++) {
+                    for(let i = 0; i < 24; i++) {
                         if(i >= 10) {
                             if(data[`${i}:00-${i+1}:00`]) {
                                 data[`${i}:00-${i+1}:00`].now +=
@@ -567,7 +567,7 @@ module.exports = (Router) => {
                 }
             } else {
                 for(let channel of channels) {
-                    for(let i = 0; i < +hour + 1; i++) {
+                    for(let i = 0; i < 24; i++) {
                         if(i >= 10) {
                             if(data[`${i}:00-${i+1}:00`]) {
                                 data[`${i}:00-${i+1}:00`].now +=

@@ -7,7 +7,28 @@
 var api = require("../../../base/main"),
     util = require("../../../utils"),
     orm = require("orm"),
-    dataOverview = require("../../../filters/dataOverview");
+    moment = require("moment");
+    dataOverview = require("../../../filters/dataOverview"),
+    global_platform = {
+        show: true,
+        key: 'type',
+        list: [{
+            key: 'ios',
+            name: 'IOS'
+        }, {
+            key: 'android',
+            name: 'Android'
+        }, {
+            key: 'app',
+            name: 'APP'
+        }, {
+            key: 'pc',
+            name: 'PC'
+        }, {
+            key: 'm',
+            name: 'H5'
+        }]
+    };
 
 module.exports = (Router) => {
     Router = new api(Router, {
@@ -15,44 +36,25 @@ module.exports = (Router) => {
         modelName : ['OverviewPlatf', "KpiValue"],
         date_picker : false,
         platform : false,
-        global_platform : {
-            show: true,
-            key: 'type',
-            list: [{
-                key: 'ios',
-                name: 'IOS'
-            }, {
-                key: 'android',
-                name: 'Android'
-            }, {
-                key: 'app',
-                name: 'APP'
-            }, {
-                key: 'pc',
-                name: 'PC'
-            }, {
-                key: 'm',
-                name: 'H5'
-            }]
-        },
+        global_platform : global_platform,
         params(query) {
             var now = new Date(),
-                ydate = util.getDate(new Date(now.getTime() - 24 * 60 * 60 * 1000)),
-                qdate = util.getDate(new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000)),
+                ydate = moment(now.getTime() - 24 * 60 * 60 * 1000).format("YYYY-MM-DD"),
+                qdate = moment(now.getTime() - 2 * 24 * 60 * 60 * 1000).format("YYYY-MM-DD"),
                 params = {
-                    date : orm.between(new Date(qdate + " 00:00:00"), new Date(ydate + " 23:59:59")),
+                    date : [ydate, qdate],
                     region : "ALL",
                     day_type : 1,
-                    type : query.type || "ios"
+                    type : query.type || this.global_platform.list[0].key
                 };
             return params;
         },
         secondParams(query, params) {
             var now = new Date(),
-                ydate = util.getDate(new Date(now.getTime() - 24 * 60 * 60 * 1000)),
-                qdate = util.getDate(new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000));
+                ydate = moment(now.getTime() - 24 * 60 * 60 * 1000).format("YYYY-MM-DD"),
+                qdate = moment(now.getTime() - 2 * 24 * 60 * 60 * 1000).format("YYYY-MM-DD");
             return {
-                date : orm.between(new Date(qdate + " 00:00:00"), new Date(ydate + " 23:59:59")),
+                date : [ydate, qdate],
                 day_type : 1
             }
         },
@@ -65,8 +67,9 @@ module.exports = (Router) => {
         router: "/dataOverview/dataOverviewAllTwo",
         modelName : ["OverviewPlatf"],
         platform : false,
+        global_platform : global_platform,
         params(query, params) {
-            params.type = params.type || 'ios';
+            params.type = params.type || this.global_platform.list[0].key;
             params.region = "ALL";
             return params;
         },

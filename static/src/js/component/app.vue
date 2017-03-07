@@ -5,9 +5,10 @@
 	<m-confirm></m-confirm>
 	<m-export-confirm></m-export-confirm>
 	<m-plataform></m-plataform>
+	<m-plataform index="1"></m-plataform>
 	<m-tab-checkbox></m-tab-checkbox>
 	<m-global></m-global>
-	<m-main v-ref:main v-for="item in list" :index="$index" :init-data="initData" :current-data="list[$index]" :loading.sync="loading"></m-main>
+	<m-main v-ref:main v-for="item in list" :index="$index" :init-data="initData" :current-data="list[$index]" :loading.sync="loading" @click.stop="hrefCheck"></m-main>
 </template>
 <script>
 	var Vue = require('Vue');
@@ -36,7 +37,8 @@
 					show: true,
 					noLoaded: 0
 				},
-				initData: window.allPageConfig
+				initData: window.allPageConfig,
+				banSubPages: []
 			};
 		},
 		vuex: {
@@ -59,7 +61,6 @@
 			'm-global': Global
 		},
 		ready() {
-
 		},
 		computed: {
 			list() {
@@ -70,8 +71,26 @@
 				return [];
 			}
 		},
+		methods: {
+			hrefCheck(ev) {
+				let $target = $(ev.target);
+				let href = $target.attr('href') || $target.parents('a').attr('href');
+				if (/^#!(\/[^\/]+?)+$/.test(href) && this.banSubPages.some(x => href.includes(x.url))) {
+					console.log(href +' has been stoped');
+					actions.alert(store, {
+						show: true,
+						msg: '无权访问该页面!',
+						type: 'danger'
+					});
+					ev.preventDefault();
+				}
+			}
+		},
 		route: {
 			data: function(transition) {
+				if (transition.from.path && transition.to.path.split('?')[0] === transition.from.path.split('?')[0]) {
+					return;
+				}
 				var url = this.$route.path.replace(/(\?.*)/, '');
 				if (!window.allPageConfig.page[url]) {
 					this.$route.router.go({
@@ -82,20 +101,31 @@
 
 
 				$('[href="#!' + url + '"]').parent().parent().parent().addClass('active');
-				$('[href="#!' + url + '"]').parent().parent().addClass('in').attr('aria-expanded', true);
+				$('[href="#!' + url + '"]').parent().parent().addClass('in').attr('aria-expanded', true).css('height', 'auto');
 				$('[href="#!' + url + '"]').focus();
 				$('#side-menu a').removeClass('active');
 				$('[href="#!' + url + '"]').addClass('active');
 
 				var currentPageDefaultData = window.allPageConfig.page[url];
-				var query_api = currentPageDefaultData.defaultData[0].query_api;
+				var id = currentPageDefaultData.id;
+				// 筛选出当前页面有权限的三级页面
+				this.banSubPages = currentPageDefaultData.banSubPages || [];
 
+				var query_api = currentPageDefaultData.defaultData[0].query_api;
+				
 				if(query_api.lastIndexOf('Zero') === query_api.length-4) {
 					$.ajax({
 						url: query_api + '_json',
 						type: 'get',
 						success: function(data) {
-							eventBus.$emit('loadGlobal', data.components);
+							// 如果没有时间组件延迟加载
+							if (data.components.date_picker && data.components.date_picker.show) {
+								eventBus.$emit('loadGlobal', data.components);
+							} else {
+								setTimeout(() => {
+									eventBus.$emit('loadGlobal', data.components);
+								}, 1000)
+							}
 							return;
 						}
 					})

@@ -3,7 +3,7 @@
 		<div class="col-lg-12">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<strong>{{currentData.title}}</strong>
+					<strong>{{currentData.title}} {{debug}}</strong>
 					<div class="head_group_con clearfix">
 						<m-drop-down :index="index" :init-data="initData" :page-components-data="pageComponentsData" :component-type="'platform'" :argvs.sync='argvs'></m-drop-down>
 						<m-drop-down :index="index" :init-data="initData" :page-components-data="pageComponentsData" :component-type="'channel'" :argvs.sync='argvs'></m-drop-down>
@@ -93,7 +93,8 @@ var Main = Vue.extend({
 			pageComponentsData: null,
 			resultArgvs: {},
 			count: 0,
-			canUpdate: false
+			canUpdate: false,
+			debug : null
 		};
 	},
 	props: ['initData', 'currentData', 'loading', 'index'],
@@ -121,7 +122,8 @@ var Main = Vue.extend({
 			type: 'get',
 			success: function(data) {
 				_this.pageComponentsData = data.components;
-				
+				_this.debug =  data.modelName;
+
 				if (_this.isnoComponent(data.components)) {
 					Vue.set(_this.argvs, 'forceChange', true);
 					_this.count = 0;
@@ -131,14 +133,24 @@ var Main = Vue.extend({
 					_this.count = 0;
 				}
 				if (/.*(\/.*One)/.test(_this.currentData.query_api)) {
-					eventBus.$emit('globalPlataform', data.components.global_plataform || {});
+					data.components.global_plataform = data.components.global_plataform || {}
+					if (data.components.global_plataform instanceof Array) {
+						eventBus.$emit('globalPlataform', data.components.global_plataform[0]);
+						eventBus.$emit('globalPlataform1', data.components.global_plataform[1]);
+					} else if (data.components.global_plataform instanceof Object) {
+						eventBus.$emit('globalPlataform', data.components.global_plataform);
+						eventBus.$emit('globalPlataform1', {});
+					}
 				} else if (!_this.index) {
 					eventBus.$emit('globalPlataform', {});
+					eventBus.$emit('globalPlataform1', {});
 				}
 			}
 		});
 		eventBus.$on('platformChange', (plataform, key) => {
-			Vue.set(_this.argvs, key, plataform);
+			if (_this.argvs[key] !== plataform) {
+				Vue.set(_this.argvs, key, plataform);
+			}
 		});
 	},
 	methods: {

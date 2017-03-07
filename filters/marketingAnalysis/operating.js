@@ -4,12 +4,15 @@
  * @fileoverview 活动流量
  */
 var util = require("../../utils"),
+    _ = require("lodash"),
     moment = require("moment");
 
 module.exports = {
     operatingOne(data, query, dates) {
         let source = data.first.data[0],
             second = data.second.data[0],
+            channel_ids = _.uniq(_.pluck(source, "channel_no")),
+            categoryY = false,
             filter_name = {
                 active_pv : "活动页PV",
                 register : "新增注册",
@@ -47,16 +50,23 @@ module.exports = {
             }
         } else {
             let obj = {};
+            categoryY = true;
             for(let item of second) {
                 config[item.channel_id] = item.channel_name;
-                obj[item.channel_id] = {};
+            }
+            for(let id of channel_ids) {
+                obj[id] = {};
                 for(let key of filter_keys) {
-                    obj[item.channel_id][key] = 0;
+                    obj[id][key] = 0;
                 }
             }
             for(let item of source) {
                 for(let key of filter_keys) {
-                    obj[item.channel_id][key] += item[key];
+                    if(obj[item.channel_no][key]) {
+                        obj[item.channel_no][key] += item[key];
+                    } else {
+                        obj[item.channel_no][key] = item[key];
+                    }
                 }
             }
             for(let key in obj) {
@@ -69,7 +79,8 @@ module.exports = {
             map : map,
             data : newData,
             config: { // 配置信息
-                stack: false // 图的堆叠
+                stack: false, // 图的堆叠
+                categoryY : categoryY
             }
         }];
     },
@@ -83,7 +94,7 @@ module.exports = {
             rowsObj = {
                 flow : ["active_pv", "active_uv", "register", "share_button_uv",
                     "share_button_pv", "product_rate"],
-                orderForm : ["order_num", "pay_user", "pay_num_money", "return_user",
+                orderForm : ["product_rate", "order_num", "pay_user", "pay_num_money", "return_user",
                     "return_num_money"],
                 coupon : ["product_rate", "coupon_get_user", "coupon_get_num", "coupon_use_user",
                     "coupon_use_num", "rate"],
@@ -227,7 +238,7 @@ module.exports = {
 
         for(let item of source) {
             if(item.channel_no) {
-                item.channel_no = config[item.channel_no];
+                item.channel = config[item.channel_no];
             } else {
                 item.date = moment(item.date).format("YYYY-MM-DD");
             }

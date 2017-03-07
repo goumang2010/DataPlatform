@@ -14,32 +14,15 @@ module.exports = (Router) => {
         router : "/marketingAnalysis/operatingOne",
         modelName : ["CamCamlistChannel", "Channel"],
         platform : false,
-        fixedParams(req, query, cb) {
-            req.models.ActivityChannelRelationship.find({
-                activity_id : orm.like(query.active_no + "%")
-            }, (err, data) => {
-                if(err) cb(err);
-                let ids = _.pluck(data, "channel_id");
-                query.channel_no = [];
-                for(let id of ids) {
-                    query.channel_no.push(id.substr(0, 5));
-                }
-                delete query.active_no;
-                cb(null, query);
-            });
-        },
         secondParams(query, params, data) {
-            let ids = _.uniq(_.pluck(data.first.data[0], "channel_no"));
-            return {
-                channel_id : ids
-            };
+            return {};
         },
         filter(data, query, dates) {
             return filter.operatingOne(data, query, dates);
         },
         global_platform : {
             show : true,
-            name : "(默认日期)",
+            name : "",
             key : "filter_type",
             list : [{
                 key: 'date',
@@ -74,28 +57,14 @@ module.exports = (Router) => {
         platform : false,
         paging : [true, false],
         excel_export : true,
-        fixedParams(req, query, cb) {
-            req.models.ActivityChannelRelationship.find({
-                activity_id : orm.like(query.active_no + "%")
-            }, (err, data) => {
-                if(err) cb(err);
-                let ids = _.pluck(data, "channel_id");
-                query.channel_no = [];
-                for(let id of ids) {
-                    query.channel_no.push(id.substr(0, 5));
-                }
-                delete query.active_no;
-                cb(null, query);
-            });
-        },
         flexible_btn : [{
             content: '<a href="javascript:void(0)">导出</a>',
             preMethods: ['excel_export']
         }],
         firstSql(query, params, isCount) {
             let filter_type = query.filter_type || "date",
-                config = ["date BETWEEN ? AND ?", "channel_no=?", "day_type=?"],
-                obj = [query.startTime, query.endTime, query.active_no, 1];
+                config = ["date BETWEEN ? AND ?", "day_type=1", "active_no=?"],
+                obj = [query.startTime, query.endTime, query.active_no];
             if(isCount) {
                 let sql = `SELECT COUNT(*) count FROM ads2_cam_camlist_channel WHERE ${config.join(" AND ")} GROUP BY ${filter_type}`;
                 return {
@@ -128,7 +97,7 @@ module.exports = (Router) => {
                     SUM(return_user) return_user,
                     SUM(return_num_money) return_num_money
                      FROM ads2_cam_camlist_channel
-                    WHERE ${config.join(" AND ")} GROUP BY ${filter_type} LIMIT ?,?`;
+                    WHERE ${config.join(" AND ")} GROUP BY ${filter_type} ${filter_type === "date" ? 'ORDER BY date DESC' : ""} LIMIT ?,?`;
                 return {
                     sql : sql,
                     params : obj
@@ -136,10 +105,7 @@ module.exports = (Router) => {
             }
         },
         secondParams(query, params, data) {
-            let ids = _.uniq(_.pluck(data.first.data[0], "channel_no"));
-            return {
-                channel_id : ids
-            };
+            return {};
         },
         filter(data, query, dates) {
             return filter.operatingTwo(data, query, dates);

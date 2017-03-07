@@ -5,9 +5,5 @@ static/dist/
 npm-debug.log
 .vscode/launch.json
 models2/allModules.json
-*.rp
-.vs/
-bin/
-obj/
-typings/
-doc/
+sqlLogRunTime.txt
+logs/

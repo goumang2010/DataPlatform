@@ -7,6 +7,7 @@
 module.exports = {
     Index(){
         return {
+            id : 54,
             name : "IM使用查看",
             path : "/IM/index",
             display : true,
@@ -44,6 +45,7 @@ module.exports = {
             name : "自定义事件",
             path : "/IM/event",
             display : true,
+            id : "00200",
             defaultData : [
                 {
                     type : "chart",
@@ -63,6 +65,7 @@ module.exports = {
             name : "表情下载",
             path : "/IM/face",
             display : true,
+            id   : "00201",
             defaultData : [
                 {
                     type : "chart",

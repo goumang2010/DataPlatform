@@ -4,7 +4,7 @@
 
 var util = require("../../utils"),
     moment = require("moment");
-
+let Reg = /省/i;
 module.exports = {
     tradeOne(data) {
         let source = data.first.data[0];
@@ -69,7 +69,7 @@ module.exports = {
                 "order_num",
                 "pay_num",
 
-                "order_num",
+                "order_sum",
                 "pay_sum",
                 "order_user",
                 "pay_user",
@@ -151,12 +151,13 @@ module.exports = {
                 filter = query.filter_key;
             let i = data.rows[0].indexOf(filter);
 
-            if(!i) i = 0; //处理前端参数出错的情况
-            let names=data.cols[0][i].caption;
+            if(i < 0) i = 0; //处理前端参数出错的情况
+            let names = data.cols[0][i].caption;
 
             map.pv = names;
             let max = 0;
             for(let item of source){
+                item.sales_province = item.sales_province.replace(Reg , "");
                 result[item.sales_province] = {
                     "pv" : item[filter]
                 }
@@ -184,26 +185,30 @@ module.exports = {
     tradeFour(data, query , dates) {
 
         let source = data.first.data[0],
+            Result = [],
             count = data.first.count || 1;
+        let num = query.filter_key , All_pay_sum = data.first.sum[0] || 1;
 
-        let num = query.filter_key , All_pay_sum = 1;
 
-        for(let item of source) {
+        for(let i=0;i<source.length;i++){
+            let item = source[i];
             if(!num){
-                item.category_name = "ALL";
-                All_pay_sum = item.pay_sum;
+                item.category_name = item["category_name_1"];
             }else{
-                item.category_name = item["category_name_"+num];
-                if(item["category_id_"+num] == "ALL"){
-                    All_pay_sum = item.pay_sum;
+                item.category_name = item["category_name_"+(num+1)];
+                if(item["category_id_"+(num+1)] == "ALL"){
+                    All_pay_sum -= item.pay_sum;
+                    continue;
                 }
             }
+
+            Result.push(item);
         }
 
-        for(let item of source){
+        for(let item of Result){
             item.pay_sum_lv = util.toFixed( item.pay_sum / All_pay_sum , 0 );
         }
 
-        return util.toTable([source], data.rows, data.cols, [count]);
+        return util.toTable([Result], data.rows, data.cols, [count]);
     }
 };

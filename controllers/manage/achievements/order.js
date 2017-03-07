@@ -4,44 +4,60 @@
  * @author Mr.He
  */
 
-var api = require("../../../base/main"),
-    filter = require("../../../filters/achievements/f_order");
+let api = require("../../../base/main"),
+    filter = require("../../../filters/achievements/f_order"),
+    orm = require("orm");
+
+function globalPlatform(type) {
+    let all = true;
+    let global_platform = {
+        show: true,
+        key : "type",
+        name : "平台选择",
+        list : []
+    };
+    if(type[2] == "1") {
+        global_platform.list.push({
+            key: "app",
+            name: "APP"
+        });
+    } else {
+        all = false;
+    }
+    if(type[3] == "1") {
+        global_platform.list.push({
+            key: "pc",
+            name: "PC"
+        });
+    } else {
+        all = false;
+    }
+    if(type[4] == "1") {
+        global_platform.list.push({
+            key: "wap",
+            name: "H5"
+        });
+    } else {
+        all = false;
+    }
+    if(all) {
+        global_platform.list = [{
+            key: "ALL",
+            name: "全部平台"
+        }].concat(global_platform.list);
+    }
+    return global_platform;
+}
 
 module.exports = (Router) => {
-   
-    Router = Router.get("/achievements/orderZero_json" , function(req , res , next){
-
-        res.json({
-            code: 200,
-            modelData: [],
-            components: {
-                filter_select: [{
-                    title: "平台选择",
-                    filter_key: "type",
-                    groups: [{
-                        key: "ALL",
-                        value: "全部平台"
-                    }, {
-                        key: "app",
-                        value: "APP"
-                    }, {
-                        key: "wap",
-                        value: "WAP"
-                    }, {
-                        key: "pc",
-                        value: "PC"
-                    }]
-                }]
-            }
-        });
-    });
-
     //订单趋势
     Router = new api(Router, {
         router : "/achievements/orderOne",
         modelName : ["OrderTrend2" , "SalesPerfConversion2"],
         platform : false,
-        toggle : true,
+        toggle : {
+            show : true
+        },
         order : ["-date"],
         filter_select : [{
             title: '指标选择(图表使用)',
@@ -80,9 +96,12 @@ module.exports = (Router) => {
                 name: 'PC'
             }]
         },*/
+        global_platform_filter(req) {
+            this.global_platform = globalPlatform(req.session.userInfo.type["39"]);
+        },
         params(query , params , sendData){
             if(!query.type){
-                params.type = "ALL";
+                params.type = this.global_platform.list[0].key;
             }
             return params;
         },
@@ -125,10 +144,14 @@ module.exports = (Router) => {
                 type: "number"
             }]
         ],
+        global_platform_filter(req) {
+            this.global_platform = globalPlatform(req.session.userInfo.type["39"]);
+        },
         params(query , params , sendData){
             if(!query.type){
-                params.type = "ALL";
+                params.type = this.global_platform.list[0].key;
             }
+            params.order_source = orm.not_in(["ALL"]);
             return params;
         },
         filter(data, query, dates) {
@@ -141,9 +164,12 @@ module.exports = (Router) => {
         router : "/achievements/orderThree",
         modelName : ["OrderComments2"],
         platform : false,
+        global_platform_filter(req) {
+            this.global_platform = globalPlatform(req.session.userInfo.type["39"]);
+        },
         params(query , params , sendData){
             if(!query.type){
-                params.type = "ALL";
+                params.type = this.global_platform.list[0].key;
             }
             return params;
         },

@@ -1,7 +1,7 @@
 <template>
 <div class="mask" v-show="bpConfig.show"   v-on:dragover.stop.prevent="" v-on:drop.stop.prevent="drop" @click="warning">
 	<div class="infobox" :draggable="draggable"  v-on:dragstart="dragstart" v-on:drag.stop.prevent="draging" v-bind:style="infopos">
-		<div class="closer" title="关闭" @click="hide"></div>
+		<div class="closer" title="关闭" @click="hide">&times;</div>
 		<div class="sider-nav ">
 			<div class="tabs-container">
 				<ul class="nav nav-tabs">
@@ -18,6 +18,9 @@
 							<div><label>选择器</label>{{config.selector}}</div>
 							<div><label>事件类型</label>单击事件</div>
 							<div><label>匹配模式</label>{{config.pattern}}</div>
+							<div class="type-filter"><label>是否模块</label>
+								<button @click="config.type = 'block'" :class="{'active': (config.type === 'block')}">是</button>
+								<button @click="config.type = 'point'" :class="{'active': (config.type !== 'block')}">否</button></div>
 							<div><label>全局埋点信息</label>{{publicBpStr}} <button @click="publicBp.push(['', ''])">+</button></div>
 							<div>
 								<div v-for="(i,item) in publicBp" class="pair">
@@ -46,9 +49,12 @@
 						</div>
 					</div> 
 					<div id="tab_bpdata" class="tab-pane fade">
-
-						<div class="extendinfo">
-						TODO
+<!-- 						<div class="date_picker">                
+							<m-date :index="1" :page-components-data="pageComponentsData" :component-type="'date_picker'" :argvs.sync='argvs' :custom-option = "datepickerOption"></m-date>
+						</div> -->
+						<div v-if="trend.chartOption && trend.chartOption.xAxis.data.length > 0" class="bp-chart" v-echarts="trend.chartOption"></div>
+						<div v-show="!trend.chartOption || trend.chartOption.xAxis.data.length === 0" class="nodata all_center bp-chart">
+							<img src="/dist/img/nodata.png">
 						</div>
 					</div> 
 				</div>
@@ -61,12 +67,55 @@
 
 <script>
 var Vue = require('Vue');
-var api = require('./api');
-var store = require('../../../store/store.js');
-var actions = require('../../../store/actions.js');
+var api = require('./lib/api.js');
+var utils = require('utils');
+var defaultChartOption = {
+	tooltip: {
+		trigger: 'axis'
+	},
+	legend: {
+		show: true,
+		bottom: 0,
+		data: ['PV', 'UV']
+	},
+	grid: {
+		top: 10,
+		left: '3%',
+		right: '4%',
+		bottom: '10%',
+		containLabel: true
+	},
+	xAxis: {
+		type: 'category',
+		boundaryGap: false,
+		data: []
+	},
+	yAxis: {
+		type: 'value'
+	},
+	series: [{
+		name: 'PV',
+		type: 'line',
+		data: []
+	}, {
+		name: 'UV',
+		type: 'line',
+		data: []
+	}]
+};
+
+
 var bpinfo = Vue.extend({
 	data: function() {
 		return {
+			argvs: {
+				endTime: utils.formatDate(new Date(), 'yyyy-MM-dd'),
+				startTime: utils.formatDate((() => {
+					let date = new Date();
+					date.setDate(date.getDate() - 7);
+					return date;
+				})(), 'yyyy-MM-dd')
+			},
 			dragpos: {},
 			draggable: true,
 			userInfo: null,
@@ -75,8 +124,9 @@ var bpinfo = Vue.extend({
 				pointName: '',
 				pattern: '',
 				platform: 'PC',
+				type: '',
 				pageUrl: '',
-				selector:'',
+				selector: '',
 				privateParam: '',
 				publicParam: ''
 			},
@@ -94,19 +144,18 @@ var bpinfo = Vue.extend({
 				input: null,
 				item: null
 			},
-			publicBp: [['','']],
-			privateBp: [['','']]
+			publicBp: [
+				['', '']
+			],
+			privateBp: [
+				['', '']
+			],
+			trend: {
+				chartOption: null
+			}
 		}
 	},
-	vuex: {
-		getters: {
-			bpConfig: function() {
-				return store.state.bpConfig;
-			}
-		},
-		actions: actions
-	},
-	computed:  {
+	computed: {
 		publicBpStr: {
 			get() {
 				return this.publicBp.filter(function(a) {
@@ -117,7 +166,9 @@ var bpinfo = Vue.extend({
 			},
 			set(newValue) {
 				if (!newValue) {
-					this.publicBp = [['','']];
+					this.publicBp = [
+						['', '']
+					];
 					return;
 				}
 				var _this = this;
@@ -125,7 +176,7 @@ var bpinfo = Vue.extend({
 				var pairs = newValue.split('&');
 				pairs.forEach(function(p) {
 					var pa = p.split('=');
-					if( pa.length === 2 ){
+					if (pa.length === 2) {
 						_this.publicBp.push([pa[0], pa[1]]);
 					}
 				});
@@ -141,7 +192,9 @@ var bpinfo = Vue.extend({
 			},
 			set(newValue) {
 				if (!newValue) {
-					this.privateBp = [['','']];
+					this.privateBp = [
+						['', '']
+					];
 					return;
 				}
 				var _this = this;
@@ -149,23 +202,32 @@ var bpinfo = Vue.extend({
 				var pairs = newValue.split('&');
 				pairs.forEach(function(p) {
 					var pa = p.split('=');
-					if( pa.length === 2 ){
+					if (pa.length === 2) {
 						_this.privateBp.push([pa[0], pa[1]]);
 					}
 				});
 			}
 		}
 	},
-	props:['loading'],
+	props: ['loading', 'bpConfig'],
 	created() {
-		this.$watch('bpConfig.trigger', function (val) {
+		this.$watch('bpConfig.trigger', function(val) {
 			if (this.bpConfig.show) {
 				this.init();
 			}
 		});
-		api.getUserInfo().then((data) =>{
-			this.userInfo = JSON.stringify(data);
-		});
+		let {
+			name,
+			username,
+			email,
+			department
+		} = window.allPageConfig.userInfo;
+		this.userInfo = {
+			name,
+			username,
+			email,
+			department
+		};
 	},
 	methods: {
 		setDraggable(val) {
@@ -173,7 +235,9 @@ var bpinfo = Vue.extend({
 		},
 		unfocus() {
 			this.setDraggable(true);
-			this.selectpos.show = false;
+			setTimeout(() => {
+				this.selectpos.show = false;
+			}, 100);
 		},
 		init() {
 			this.loading.show = true;
@@ -181,15 +245,19 @@ var bpinfo = Vue.extend({
 			api.getBp(_this.bpConfig).then(function(data) {
 				let keys = Object.keys(data);
 				for (let key of keys) {
-					if(data[key] === '') {
+					if (data[key] === '') {
 						_this.config[key] = _this.bpConfig[key];
 					} else {
 						_this.config[key] = data[key];
 					}
 				}
 				// show the config window
-				_this.publicBpStr = data.publicParam;			
+				_this.publicBpStr = data.publicParam;
 				_this.privateBpStr = data.privateParam;
+				// point Id 为0时， 表示无该点信息
+				if (data.pointId) {
+					_this.loadChart();
+				}
 				_this.loading.show = false;
 			}).catch(function(err) {
 				console.log(err);
@@ -197,9 +265,7 @@ var bpinfo = Vue.extend({
 			});
 		},
 		hide() {
-			actions.databp(store, {
-				show: false
-			});
+			this.bpConfig.show = false;
 		},
 		showDropDown(item, e) {
 
@@ -207,7 +273,7 @@ var bpinfo = Vue.extend({
 			if (this.selectpos.show === false || (e.target && this.selected.input !== e.target)) {
 				let offset = $(e.target).position();
 				this.selectpos.top = `calc(${offset.top}px + ${this.infopos.top} + 30px)`;
-				if(this.infopos.left === 'inherit') {
+				if (this.infopos.left === 'inherit') {
 					this.selectpos.right = `120px`;
 				} else {
 					this.selectpos.left = `calc(${offset.left}px + ${this.infopos.left})`;
@@ -224,8 +290,8 @@ var bpinfo = Vue.extend({
 			this.selectpos.show = false;
 		},
 		dragstart(e) {
-			e.dataTransfer.effectAllowed = "move";  //移动效果
-			e.dataTransfer.setData("text", '');  //附加数据，　没有这一项，firefox中无法移动
+			e.dataTransfer.effectAllowed = "move"; //移动效果
+			e.dataTransfer.setData("text", ''); //附加数据，　没有这一项，firefox中无法移动
 			this.dragpos.x = e.offsetX || e.clientX - $(e.target).offset().left;
 			this.dragpos.y = e.offsetY || e.clientY - $(e.target).offset().top;
 			this.mask = true;
@@ -233,16 +299,16 @@ var bpinfo = Vue.extend({
 		draging(e) {
 			let newx = e.clientX - this.dragpos.x;
 			let newy = e.clientY - this.dragpos.y;
-			if(newx > 0 && newy > 0) {
+			if (newx > 0 && newy > 0) {
 				this.infopos.left = newx + 'px';
 				this.infopos.top = newy + 'px';
 			}
 		},
 		drop(e) {
-			e.preventDefault() || e.stopPropagation(); 
+			e.preventDefault() || e.stopPropagation();
 		},
-		warning(e){
-			if(e.path[0].className === 'mask') {
+		warning(e) {
+			if (e.path[0].className === 'mask') {
 				actions.alert(store, {
 					show: true,
 					msg: '请关闭埋点窗口后操作',
@@ -250,53 +316,97 @@ var bpinfo = Vue.extend({
 				});
 			}
 		},
+		loadChart(ev) {
+			// fetch detail data
+			// 暂时七天数据
+			let {
+				startTime,
+				endTime
+			} = this.argvs;
+			api.getHeatDetail({...this.config,
+				startTime: startTime + ' 00:00:00',
+				endTime: endTime + ' 23:59:59'
+			}).then((data) => {
+				// build chart option
+				let xdata = [];
+				let pvdata = [];
+				let uvdata = [];
+				for (let item of data) {
+					// parse the date to string
+					item.date = utils.formatDate(new Date(item.date), 'yyyy-MM-dd');
+					xdata.push(item.date);
+					pvdata.push(item.pv);
+					uvdata.push(item.uv);
+				}
+				let chartOption = Object.assign({}, defaultChartOption);
+				chartOption.xAxis.data = xdata;
+				chartOption.series[0].data = pvdata;
+				chartOption.series[1].data = uvdata;
+				this.trend.chartOption = chartOption;
+			});
+		},
 		save(ev) {
 			let $save = $(ev.target);
-			if(this.config.pointName === '' || this.config.pointName == null) {
+			let $popover = function(content) {
 				$save.popover({
-					content: '请输入名称'
+					content
 				});
-				setTimeout(function () { $save.popover("destroy"); }, 1000);
+				setTimeout(function() {
+					$save.popover("destroy");
+				}, 1000);
 				$save.popover('show');
+			}
+			if (this.config.pointName === '' || this.config.pointName == null) {
+				$popover('请输入名称');
 				return false;
 			}
 			var _this = this;
 			var existKeys = {};
 			var allbps = [..._this.publicBp, ..._this.privateBp];
-			let illegal = /[=&]/;
-			for(let a of allbps) {
-				if (existKeys[a[0]]) {
-					$save.popover({
-						content: '请检查重复key'
-					});
-					$save.popover('show');
-					setTimeout(function () { $save.popover("destroy"); }, 1000);
-					return false;
-				} else {
-					if(illegal.test(a[0]) || illegal.test(a[1])) {
-						$save.popover({
-							content: '含有非法字符，请检查'
-						});
-						$save.popover('show');
-						setTimeout(function () { $save.popover("destroy"); }, 1000);
+			let emptyCount = 0;
+			let illegalRE = /[=&]/;
+			let emptyRE = /^\s*$/;
+			for (let a of allbps) {
+				let _key = a[0];
+				let _val = a[1];
+				if (emptyRE.test(_key)) {
+					if (emptyRE.test(_val)) {
+						// key value都为空，则不做验证
+						emptyCount++;
+						continue;
+					} else {
+						$popover('key不能为空');
 						return false;
 					}
-					existKeys[a[0]] = 1;
+				} else if (emptyRE.test(_val)) {
+					$popover('value不能为空');
+					return false;
 				}
+				if (existKeys[_key]) {
+					$popover('请检查重复key');
+					return false;
+				}
+				if (illegalRE.test(_key) || illegalRE.test(_val)) {
+					$popover('含有非法字符，请检查');
+					return false;
+				}
+				existKeys[_key] = 1;
+			}
+			if (emptyCount === allbps.length) {
+				$popover('请至少设置一组参数');
+				return false;
 			}
 			_this.config.publicParam = _this.publicBpStr;
 			_this.config.privateParam = _this.privateBpStr;
-			_this.config.userInfo = _this.userInfo;
+			_this.config.userInfo = JSON.stringify(_this.userInfo);
 			if (_this.config.pointId) {
 				api.updateBp(_this.config).then(function(res) {
 					// 更新成功刷新传入的数据
-					_this.config.show = false;
-					actions.databp(store, _this.config);
+					_this.bpConfig.show = false;
 				});
 			} else {
 				api.saveBp(_this.config).then(function() {
-					_this.config.show = false;
-					actions.databp(store, _this.config);
+					_this.bpConfig.show = false;
 				});
 			}
 		}
@@ -321,6 +431,9 @@ module.exports = bpinfo;
 }
 ::-webkit-scrollbar-track-piece {
 	-webkit-border-radius: 0;
+}
+.all_center {
+	top: 40%;
 }
 .mask {
 	position: fixed;
@@ -350,21 +463,31 @@ module.exports = bpinfo;
 	z-index: 300
 }
 .closer {
-	transition: transform .3s;
-	border-radius: 50%;
-	position: absolute;
-	right: 6px;
-	top: 5px;
-	display: block;
-	width: 18px;
-	height: 18px;
-	border: 1px solid transparent;
-	background: url(/dist/img/sprites.png) no-repeat;
-	background-position: -36px 4px;
-	overflow: hidden;
-	cursor: pointer;
+    position: absolute;
+    right: 8px;
+    cursor: pointer;
+    font-size: 17px;
 }
 
+.type-filter button {
+	display: inline-block;
+    vertical-align: middle;
+    border: 1px solid #cacaca;
+    color: #333;
+    padding: 2px 12px;
+    background: #fff;
+    font-size: 12px;
+    outline: none;
+    margin-left: -3px;
+    transition: all ease 0.2s;
+    -webkit-transition: all ease 0.2s;
+}
+
+.type-filter button.active {
+    background: #3389d4;
+    border: 1px solid #3389d4;
+    color: #fff;
+}
 #tab_baseinfo input[type='text'] {
 	max-width: 180px;
 	display: inline-block;
@@ -483,5 +606,13 @@ button.save {
 }
 .value-list li:hover {
 	background-color: #eee;
+}
+#tab_bpdata {
+	width: 100%;
+	height: 100%;
+}
+#tab_bpdata .bp-chart {
+	width: 336px;
+	height: 200px;
 }
 </style>

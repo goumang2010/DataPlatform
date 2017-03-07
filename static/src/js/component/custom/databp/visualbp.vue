@@ -3,11 +3,11 @@
 	<form class='form-inline'>
 		<div class='form-group'>
 			<label>埋点URL</label>
-			<input type='text' class='form-control' placeholder='' v-model="bpConfig.pageUrl" @keyup.enter.stop.prevent="searchClick">
+			<input type='text' class='form-control' placeholder='' v-model="bpConfig.pageUrl" @keydown.enter.stop.prevent="searchClick">
 		</div>
 		<div class='form-group'>
 			<label>平台</label>
-			<select v-model="bpConfig.platform">
+			<select class="form-control" v-model="bpConfig.platform">
 				<option value='PC'>PC</option>
 				<option value='H5'>H5</option>
 			</select>
@@ -18,65 +18,74 @@
 	<div id='container' class='main'>
 		<div class='tabpanel_content' style='width: 100%; height: 1000px;'>
 			<div class='html_content' style='z-index: 2;'>
-				<iframe :class="{'pc-iframe': bpConfig.platform === 'PC', 'wap-iframe':  bpConfig.platform === 'H5'}" frameborder='no' border='0' marginwidth='0' marginheight='0' id='tab_baseQuery'  src='{{iframe_url}}' v-on:load="iframeload"></iframe>
+				<iframe :class="{'pc-iframe': bpConfig.platform === 'PC', 'wap-iframe':  bpConfig.platform === 'H5'}" frameborder='no' border='0' marginwidth='0' marginheight='0' id='iframenode'  src='{{iframe_url}}' v-on:load="iframeload"></iframe>
 			</div>
 		</div>
 	</div>
 </div>
-	<m-bpinfo  :loading.sync='loading'></m-bpinfo>
-	<m-loading :loading.sync='loading'></m-loading>
-	<m-alert></m-alert>
+	<m-bpinfo  :loading.sync='loading' :bp-config.sync='bpConfig'></m-bpinfo>
 </template>
 <script>
 	var Vue = require('Vue');
-	Vue.config.debug = true;
 	var $ = require('jQuery');
-	var utils = require('utils');
-	var api = require('./api');
-	var Loading = require('../../common/loading.vue');
-	var Alert = require('../../common/alert.vue');
+	var getSelector = require('./lib/selector.js').getSelector;
+	var api = require('./lib/api.js');
+	var Alert = require('common/alert.vue');
 	var bpInfo = require('./bpinfo.vue');
-	var store = require('../../../store/store.js');
-	var actions = require('../../../store/actions.js');
 	
 	var visualbp = Vue.extend({
 		name: 'databp',
 		components: {
-			'm-loading': Loading,
 			'm-alert': Alert,
 			'm-bpinfo': bpInfo
 		},
-		store: store,
+		props:['loading'],
 		data: function() {
 			return {
 				iframe_url: '',
-				loading: {
-					show: false,
-					noLoaded: 0
-				},
+				deadtimer: null,
+				iframe_node: null,
 				bpConfig: {
 					show: false,
+					trigger: false,
 					pointName: '',
 					platform: 'PC',
 					pageUrl: '',
 					selector:'',
-					privateParam: '',
-					publicParam: ''
+					type: 'point'
 				}
 			}
 		},
 		ready() {
+			this.iframe_node = document.getElementById('iframenode');
 		},
 		route: {
 	        activate: function (transition) {
-	        	this.loading.show = true;
-				let query = this.$route.query;   	
+	        	this.activate(this.$route.query);
+				return Promise.resolve(true);
+	        },
+	        deactivate: function() {
+	        	this.bpConfig.show = false;
+	        	// actions.databp(store, {show: false});
+	        }
+    	},
+    	events: {
+    		'visual_url': function (config) {
+		    	this.activate(config);
+		    }
+    	},
+		methods: {
+			activate(query) {
+	        	this.loading.show = true;	
 	        	let pageUrl = query.pageUrl;
 				let platform = query.platform;
 				if (pageUrl && platform) {
 					if(query.selector) {
-						query.show = true;
-						actions.databp(store, query);
+						this.bpConfig.selector = query.selector;
+						this.bpConfig.type = query.type;
+						this.bpConfig.pointName = query.pointName;
+						this.trigger();
+						// actions.databp(store, query);
 					}
 					this.bpConfig.pageUrl = pageUrl;
 					this.bpConfig.platform = platform;
@@ -84,100 +93,151 @@
 				} else if (this.iframe_url === '') {
 					this.loading.show = false;
 				}
-				return Promise.resolve(true);
-	        }
-    	},
-    	events: {
-    		'visual_url': function (config) {
-		    	this.bpConfig.pageUrl = config.pageUrl;
-		    	this.bpConfig.platform = config.platform || 'PC';
-		    	this.search(true);
-		    }
-    	},
-		methods: {
-			iframeload(ev) {
+			},
+			trigger() {
+				this.bpConfig.trigger = !this.bpConfig.trigger;
+				this.bpConfig.show = true;
+			},
+			resetConfig() {
+				this.bpConfig.pointName = '';
+				this.bpConfig.selector = '';
+				this.bpConfig.type = 'point';
+			},
+			iframeload() {
 				// console.log('load');
 				let _this = this;
 				if (!_this.bpConfig.pageUrl) {
 					return false;
 				}
 				_this.loading.show = false;
-				let iframenode = ev.path[0]
+				let iframenode = this.iframe_node;
 				let $iframe = $(iframenode).contents();
 
 
 
 				// 修正重定向
 				let $iframewin = iframenode.contentWindow;
-				_this.bpConfig.pageUrl = $iframewin.$pageUrl;
+				let _newurl= $iframewin.$pageUrl;
+				// 修复最后无/
+				let host;
+				if((host = _newurl.match(/^https:\/\/[^\/]+?\//)) && (host = host[0])) {
+					_this.bpConfig.pageUrl = _newurl;
+				} else {
+					host = _this.bpConfig.pageUrl = _newurl + '/';
+				}
 				_this.bpConfig.platform = $iframewin.$platform;
 
 
 				_this.$dispatch('visualbp_loaded', _this.bpConfig);
 				var $head = $iframe.find('head'); 
 				var $body = $iframe.find('body');
-				var hovered = [];
-				var selected;
-				$head.append('<style> .bphover {outline: 2px solid #0072ff !important;background-color: rgba(105, 210, 249, 0.4) !important;} .bphover-position-fix {position: relative !important;}</style>');
-				let queryselected;
-				if ((queryselected = _this.$route.query) && (queryselected = queryselected.selector)) {
-					let $target = $iframe.find(queryselected);
-					let $node;
-					if ($node = $target.get(0)) {
-						if (/static|inherit|initial/.test(window.getComputedStyle($node).position)) {
-							$target.addClass('bphover-position-fix');
-						}
-						$target.addClass('bphover');
-						hovered.push($target);
-					}
-				}
-				$body.bind('contextmenu', function(e) {
+				if(/visualbp/.test(this.$route.path)) {
 
-					if (selected) {
-						selected.removeClass('bphover');
-					}
-					selected = $(e.target);
-					selected.removeClass('bphover');
-					if (selected.hasClass('bphover-position-fix')) {
-						selected.removeClass('bphover-position-fix');
-					}
-					// 去除css类防止选择器中被加入该类
-					var selector = utils.getSelector(e.target);
-					if (/static|inherit|initial/.test(window.getComputedStyle(e.target).position)) {
-						selected.addClass('bphover-position-fix');
-					}
-					selected.addClass('bphover');
-					_this.bpConfig.selector = selector;
-					_this.bpConfig.show = true;
-					actions.databp(store, _this.bpConfig);
-					e.preventDefault();
-				});
-				$body.mouseover(
-					function(e) {
-						for (var i in hovered) {
-							hovered[i].removeClass('bphover');
-							hovered[i].removeClass('bphover-position-fix');
-						}
-						hovered.length = 0;
-						var $target = $(e.target)
-						if(!($target.hasClass('bphover')  || $target.is(selected))) {
-							if (/static|inherit|initial/.test(window.getComputedStyle(e.target).position)) {
+					var hovered = [];
+					var selected;
+					$head.append('<style> .bphover {outline: 2px solid #0072ff !important;background-color: rgba(105, 210, 249, 0.4) !important;} .bphover-position-fix {position: relative !important;}</style>');
+					let queryselected;
+					if ((queryselected = _this.$route.query) && (queryselected = queryselected.selector)) {
+						let $target = $iframe.find(queryselected);
+						let $node;
+						if ($node = $target.get(0)) {
+							if (/static|inherit|initial/.test(window.getComputedStyle($node).position)) {
 								$target.addClass('bphover-position-fix');
 							}
 							$target.addClass('bphover');
 							hovered.push($target);
+							let elemtop = $target.offset().top - 30;
+							let maxtop = $iframe.height() - $($iframewin).height();
+							if(elemtop >  maxtop) {
+								$body.animate({
+				                    scrollTop: maxtop
+				                }, 2000);
+								$('html body').animate({
+				                    scrollTop: elemtop - maxtop
+				                }, 2000);
+							} else {
+								$body.animate({
+				                    scrollTop: elemtop
+				                }, 2000);
+								$('html body').animate({
+				                    scrollTop: 0
+				                }, 2000);
+							}
 						}
-				});
+					}
+					$body.bind('contextmenu', function(e) {
+
+						if (selected) {
+							selected.removeClass('bphover');
+						}
+						selected = $(e.target);
+						selected.removeClass('bphover');
+						if (selected.hasClass('bphover-position-fix')) {
+							selected.removeClass('bphover-position-fix');
+						}
+						// 去除css类防止选择器中被加入该类
+						var selector = getSelector(e.target);
+						if (/static|inherit|initial/.test(window.getComputedStyle(e.target).position)) {
+							selected.addClass('bphover-position-fix');
+						}
+						selected.addClass('bphover');
+						_this.resetConfig();
+						_this.bpConfig.selector = selector;
+						_this.trigger();
+						// actions.databp(store, _this.bpConfig);
+						e.preventDefault();
+					});
+					$body.bind('dragend', function(e){
+						let $target = $(e.target);
+						$target.parent().attr('draggable', 'true');
+						$(e.target).css('visibility','hidden');
+				    });
+					$body.mouseover(
+						function(e) {
+							for (var i in hovered) {
+								hovered[i].removeClass('bphover');
+								hovered[i].removeClass('bphover-position-fix');
+							}
+							hovered.length = 0;
+							var $target = $(e.target)
+							if(!($target.hasClass('bphover')  || $target.is(selected))) {
+								if (/static|inherit|initial/.test(window.getComputedStyle(e.target).position)) {
+									$target.addClass('bphover-position-fix');
+								}
+								$target.addClass('bphover');
+								hovered.push($target);
+							}
+					});
+				}
+
 				$body.click(function(e) {
+					
 					let $target = $(e.target);
 					let href = $target.attr('href') || $target.parents('a').attr('href');
-					if (href && href.indexOf('javascript') === -1) {
-						_this.bpConfig.pageUrl = href;
-						_this.searchClick();
+					if(href) {
+						if (/#/.test(href)) {
+							// 有锚点,防止跳转
+							return false;
+						} else if (/javascript/.test(href)){
+							// 内联脚本 正常执行
 
+						} else if (/https?:\/\//.test(href)) {
+							// do noting
+							_this.bpConfig.pageUrl = href;
+							_this.searchClick();
+							return false;
+						} else {
+							if (href.startsWith('/')) {
+								_this.bpConfig.pageUrl = host + href.slice(1);
+							} else {
+								_this.bpConfig.pageUrl = _this.bpConfig.pageUrl.replace(/\/$/, '') + '/' + href;
+							}
+							_this.searchClick();
+							return false;
+						}
 					}
-					return false;
 				});
+
 			},
 			searchClick() {
 				var url = this.bpConfig.pageUrl;
@@ -189,7 +249,7 @@
 					return false;
 				}
 				this.$router.go({
-					path: this.$route.path,
+					path: this.$route.path.split('?')[0],
 					query: {pageUrl: url,
 							platform: this.bpConfig.platform
 					}
@@ -199,11 +259,29 @@
 			},
 			search(forceloading = false) {
 				this.loading.show = true;
-				var newiframe_url = '/databp/html?m='+this.bpConfig.platform+'&url=' + this.bpConfig.pageUrl;
+				this.deadtimer && clearTimeout(this.deadtimer);
+				let rawurl = this.bpConfig.pageUrl;
+				var newiframe_url = '/databp/html?m='+this.bpConfig.platform+'&url=' + encodeURIComponent(rawurl);
+				let rawquery = rawurl.split('?')[1];
+				rawquery && (newiframe_url += '&' + rawquery);
+				
 				if (newiframe_url === this.iframe_url && !forceloading) {
 					this.loading.show = false;
+					this.$dispatch('search_clicked', this.bpConfig);
+					
 				}
 				this.iframe_url = newiframe_url;
+				this.deadtimer = setTimeout(() => {
+					if(this.loading.show) {
+						if (window.stop) {
+						    window.stop();
+						} else {
+						    document.execCommand('Stop'); // MSIE
+						}
+						this.iframeload();
+						this.loading.show = false;
+					}
+			    }, 10000);
 			}
 		}
 	});
@@ -215,7 +293,7 @@
 	padding-bottom: 10px;
 }
 .form-inline .form-group {
-	margin-right: 40px;
+	margin-right: 20px;
 }
 .form-inline input {
 	width: 350px;
@@ -249,6 +327,7 @@
 	-o-transform-origin: 0 0;
 	-webkit-transform: scale(0.8);
 	-webkit-transform-origin: 0 0;
+	overflow-y: scroll;
 }
 
 .wap-iframe{

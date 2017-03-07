@@ -51,7 +51,11 @@ var Btns = Vue.extend({
     methods: {
         excel_export: function(ev){
             var key = window.location.hash.replace('#!','').replace(/(\?.*)/, '');
-            if (!(window.allPageConfig.userInfo.export[window.allPageConfig.page[key].id] && window.allPageConfig.userInfo.export[window.allPageConfig.page[key].id].length)) {
+            let userexport;
+            let pageconfig = window.allPageConfig.page[key];
+            if(pageconfig.router ||  ((userexport = window.allPageConfig.userInfo.export[pageconfig.f_id]) && userexport.includes(pageconfig.id))) {
+                // 有权限
+            } else {
                 actions.alert(store, {
                     show: true,
                     msg: '无权限',
@@ -59,9 +63,6 @@ var Btns = Vue.extend({
                 })
                 return;
             }
-            
-            var key = location.hash.replace('#!', '').replace(/(\?.*)/, '');
-
             actions.exportConfirm(store, {
                 show: true,
                 title: '请选择导出数据范围（<1000）',
@@ -111,7 +112,7 @@ var Btns = Vue.extend({
                 type: 'get',
                 success: function(data){
                     _this.hasRequestUrl = helpUrl;
-                    var tableData = data.modelData[0];
+                    var tableData = data.modelData;
                     actions.modalTable(store, {
                         show: true,
                         title: '帮助信息',

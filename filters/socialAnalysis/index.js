@@ -210,6 +210,7 @@ module.exports = {
         }
 
         for(let key of source) {
+            key.type = key.type.toUpperCase();
             if(obj[key.type]) {
                 obj[key.type].two += key.new_group_num;
                 obj[key.type].three += key.new_join_group_num;
@@ -267,7 +268,27 @@ module.exports = {
         for(let key of source){
             var date = util.getDate(key.date);
             newData[date].value += key[query.filter_key];
+            key.date = util.getDate(key.date);
         }
+
+        if(query.main_show_type_filter == "table"){
+            data.rows[0] = Object.keys(filter_name);
+            data.rows[0].unshift("date");
+            data.cols[0] = [];
+            for(let key in filter_name){
+                let obj = {
+                    "caption" : filter_name[key],
+                    "type" : "number"
+                }
+                data.cols[0].push(obj);
+            }
+            data.cols[0].unshift({
+                "caption":"日期",
+                "type"   :"date"
+            });
+            return util.toTable([source], data.rows, data.cols);
+        }
+
 
         return [{
             type : type,
@@ -355,18 +376,16 @@ module.exports = {
             };
         var obj = {},
             newData = {};
-        var showData = [];
+        // var showData = [];
 
-        for(let cid of group_type){
-            for(let item of orderData){
-                if(item.id == cid){
-                    obj[cid] = item.name;
-                    newData[item.name] = {
-                        value : 0
-                    }
-                }
-            }
-        }
+
+
+        // for(let item of orderData){
+        //         obj[item.id] = item.name;
+        //         newData[item.name] = {
+        //             value : 0
+        //         }
+        // }
 
         for(let item of source){
             if(item.category_id in obj){
@@ -395,9 +414,16 @@ module.exports = {
             ThirdData = data.third.data;
 
         for(let key of ThirdData) {
-            let obj = {};
-            obj[key.key] = key.sum_value;
-            config[key.group_id] = obj;
+            if(config[key.group_id]) {
+                if(config[key.group_id][key.key]) {
+                    config[key.group_id][key.key] += key.value;
+                } else {
+                    config[key.group_id][key.key] = key.value;
+                }
+            } else {
+                config[key.group_id] = {};
+                config[key.group_id][key.key] = key.value;
+            }
         }
         //分类名称
         var obj = {};
@@ -408,15 +434,16 @@ module.exports = {
         var i = 1;
         for(let item of source){
             item.top = (page - 1) * 20 + i;
-            item.group_person_num = config[item.group_id] ? config[item.group_id].group_person_num || 0 : 0;
-            item.group_topic_num = config[item.group_id] ? config[item.group_id].group_topic_num || 0 : 0;
-            item.topic_subreply_num = config[item.group_id] ? config[item.group_id].topic_subreply_num || 0 : 0;
-            item.topic_praise_num = config[item.group_id] ? config[item.group_id].topic_praise_num || 0 : 0;
-            item.topic_collect_num = config[item.group_id] ? config[item.group_id].topic_collect_num || 0 : 0;
-            item.topic_reply_num = config[item.group_id] ? config[item.group_id].topic_reply_num || 0 : 0;
+            let config_obj = config[item.group_id] || {};
+            item.group_person_num = config_obj.group_person_num || 0;
+            item.group_topic_num = config_obj.group_topic_num || 0;
+            item.topic_subreply_num = config_obj.topic_subreply_num || 0;
+            item.topic_praise_num = config_obj.topic_praise_num || 0;
+            item.topic_collect_num = config_obj.topic_collect_num || 0;
+            item.topic_reply_num = config_obj.topic_reply_num || 0;
             item.reply_num =
-                config[item.group_id] ? config[item.group_id].topic_reply_num || 0 : 0 +
-                config[item.group_id] ? config[item.group_id].topic_subreply_num || 0 : 0;
+                (config_obj.topic_reply_num || 0) +
+                (config_obj.topic_subreply_num || 0);
             item.category_id_1 = obj[item.category_id_1] || null;
             item.category_id_2 = obj[item.category_id_2] || null;
             item.creater_flag = config[item.creater_flag] || null;

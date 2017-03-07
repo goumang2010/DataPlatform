@@ -36,12 +36,12 @@ var DateCom = Vue.extend({
     data: function() {
         return {
             // 根据url判断是否判断起止时间大于当前时间
-            validlist: [ '/custom/saveActivity', '/databp/bpmanage' ]
+            validlist: [ '/custom/saveActivity', '/databp/bpmanage', '/databp/heatmap', '/databp/bpstats' ]
         }
     },
-    props: ['index','pageComponentsData','componentType','argvs','initData', 'cancelDateLimit', 'isGlobal'],
+    props: ['index','pageComponentsData','componentType','argvs','initData', 'cancelDateLimit', 'isGlobal', 'customOption'],
     ready: function() {
-
+       
     },
     methods: {
 
@@ -50,6 +50,7 @@ var DateCom = Vue.extend({
         'pageComponentsData': {
             handler: function(val){
                 var _this = this;
+
                 // 异步请求组件参数，watch到变化之后初始化，其它组件类似
                 var today = utils.formatDate (new Date(),'yyyy-MM-dd');
                 var yesterday = utils.formatDate (new Date(Date.now() - 24 * 60 * 60 * 1000),'yyyy-MM-dd');
@@ -101,8 +102,13 @@ var DateCom = Vue.extend({
                     "showDayUnit": this.pageComponentsData[this.componentType].showDayUnit ? true : false
                 }
                 // 取消日期限制
-                if(this.cancelDateLimit) {
+                if(this.cancelDateLimit || this.pageComponentsData[this.componentType].cancelDateLimit) {
                     options.dateLimit = null;
+                }
+                if(this.customOption) {
+                    Object.assign(options, this.customOption);
+                    this.argvs.endTime = options.endDate;
+                    this.argvs.startTime = options.startDate;
                 }
                 $('#datePicker_' + this.index).find('input').daterangepicker(options);
                 $('#datePicker_' + this.index).find('input').on('cancel.daterangepicker',function(ev, picker){
