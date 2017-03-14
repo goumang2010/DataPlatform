@@ -7,3 +7,7 @@ npm-debug.log
 models2/allModules.json
 sqlLogRunTime.txt
 logs/
+typings/
+.vs/
+bin/
+obj/
