@@ -85,8 +85,18 @@ module.exports = {
         let source = data.first.data[0];
         let map = {} , result = {};
 
-        for(let i=1;i<data.rows[0].length;i++){
-            map[data.rows[0][i]] = data.cols[0][i].caption;
+        //TODO 改动start
+        let rows = [],
+            cols = [];
+        for(let i = 0, len = data.rows[0].length; i < len; i++) {
+            if(i !== 6) {
+                rows.push(data.rows[0][i]);
+                cols.push(data.cols[0][i]);
+            }
+        }
+        //TODO 改动end
+        for(let i=1;i<rows.length;i++){
+            map[rows[i]] = cols[i].caption;
         }
 
         for(let date of dates){
@@ -106,8 +116,14 @@ module.exports = {
         }
 
         if(query.main_show_type_filter == "table"){
-            source = Deal100(item , ["expect_rebate_amount" , "cancel_rebate_amount" , "is_over_rebate_order_amount"]);
-            return util.toTable([source], data.rows, data.cols);
+            for(let item of source) {
+                for(let key of ["expect_rebate_amount" , "cancel_rebate_amount" , "is_over_rebate_order_amount"]) {
+                    item[key] = (item[key] / 100).toFixed(2);
+                }
+                // Deal100(item , ["expect_rebate_amount" , "cancel_rebate_amount" , "is_over_rebate_order_amount"]);
+            }
+            // source = Deal100(item , ["expect_rebate_amount" , "cancel_rebate_amount" , "is_over_rebate_order_amount"]);
+            return util.toTable([source], [rows], [cols]);
         }else{
             return [{
                 type : "line",
@@ -579,14 +595,17 @@ module.exports = {
         let rows = [];
         let cols = [];
         for(let i = 0, len = data.rows[0].length; i < len; i++) {
-            if(i != 6) {
+            if(i != 6 && len < 10) {
+                rows.push(data.rows[0][i]);
+                cols.push(data.cols[0][i]);
+            } else if(i != 7 && len > 10) {
                 rows.push(data.rows[0][i]);
                 cols.push(data.cols[0][i]);
             }
         }
         //TODO 改动end
 
-        source = Deal100(source , ["expect_rebate_amount","is_over_rebate_order_amount" , "is_rebate_fee" , "cancel_rebate_amount", "is_rebate_item_fee"]);
+        source = Deal100(source , ["expect_rebate_amount","is_over_rebate_order_amount" , "is_rebate_fee" , "cancel_rebate_amount", "is_rebate_item_fee", "is_over_rebate_invite_amount"]);
         
         return util.toTable([source] , [rows], [cols] , [count]);
     },
@@ -1176,6 +1195,13 @@ module.exports = {
         let ThisOne = {"expect_rebate_amount":0};
         let AllOne  = {};
 
+
+        for(let key of Rows){
+            if(key == "Blank"){
+                continue;
+            }
+            ThisOne[key] = 0;
+        }
         //整理数据
         for(let item of source){
             for(let key of Rows){
@@ -1188,6 +1214,13 @@ module.exports = {
                     ThisOne[key] = item[key];
                 }
             }
+        }
+
+        for(let key of RowsAll) {
+            if (key == "Blank") {
+                continue;
+            }
+            AllOne[key] = 0;
         }
 
         for(let item of second){
@@ -1591,6 +1624,7 @@ module.exports = {
             delete params.search_key;
             delete query.search_key;
         }
+        params.rebate_type = params.rebate_type.split(",");
         return params;
     },
     rebate_shopPlan_01_second(query , params , sendData){
@@ -1637,8 +1671,8 @@ module.exports = {
                 cb(err);
             } else {
                 var user_party = _.uniq(_.pluck(data, "flow_code"));
-                filter_select.groups[0].key = user_party;
-                
+                filter_select.groups[0].key = user_party.join(",");
+
                 for(let item of data){
                     let obj = {
                         "key" : item.flow_code,

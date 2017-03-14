@@ -83,9 +83,9 @@ module.exports = {
             second = data[1],
             third  = data[2];
         let Rows = util.megerArray([] , rows), Result = {};
-        // for(let key of Rows){
-        //     Result[key] = 0;
-        // }
+        for(let key of Rows){
+            Result[key] = 0;
+        }
 
         Result["累计点赞用户数"] = 0;
         Result["累计收藏用户数"] = 0;
@@ -112,12 +112,15 @@ module.exports = {
         }
         if(third.length > 0){
             replytopicallcount = third[0].replytopicallcount || 0;
-        } else {
-            third[0] = {};
+        }
+
+        let new_reply_topic_num = 0;
+        for(let key of third) {
+            new_reply_topic_num += key.new_reply_topic_num;
         }
 
         Result.userin_lv = util.toFixed( Result.group_persons_num , registeruserallcount );
-        Result.reply_lv = util.toFixed( third[0].new_reply_topic_num || 0 , Result.all_topic_num || 0 );
+        Result.reply_lv = util.toFixed( new_reply_topic_num , Result.all_topic_num || 0 );
 
         return util.toTable([[Result],[Result],[Result]], rows, cols , null , [true , true , true]);
     },
