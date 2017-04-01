@@ -257,14 +257,15 @@ module.exports = function(Router) {
                 });
             }
         } else {
-            if (req.session.isLogin && req.session.userInfo && !req.session.userInfo.isBi) {
-                /*用户输入浏览器地址栏URL路由权限控制*/
-                return next();
-            } else if(req.session.userInfo && req.session.userInfo.isBi) {
-                return res.redirect("/register");
-            }
-            // var form = req.protocol + '://' + req.get('host') + req.originalUrl;
-            res.redirect(env === "pro" ? login.pro : login.test);
+            return next();
+            // if (req.session.isLogin && req.session.userInfo && !req.session.userInfo.isBi) {
+            //     /*用户输入浏览器地址栏URL路由权限控制*/
+            //     return next();
+            // } else if(req.session.userInfo && req.session.userInfo.isBi) {
+            //     return res.redirect("/register");
+            // }
+            // // var form = req.protocol + '://' + req.get('host') + req.originalUrl;
+            // res.redirect(env === "pro" ? login.pro : login.test);
             // res.redirect('/login?from=' + encodeURIComponent(form));
         }
         // if (req.session.isLogin) {

@@ -68,30 +68,25 @@ renderApi.prototype = {
     },
     _renderData(req, res, dataParams) {
         var pageAll = {},
-            page = {},
-            limited = req.session.userInfo.limited,
-            sub_pages = req.session.userInfo.sub_pages;
+            page = {};
         for(var key in config.limit) {
             var limit = config.limit[key];
-            if(limited[key]) {
                 let obj = {};
                 for(let k of limit.path) {
                     obj[k.id] = k;
                 }
-                for(var value of limited[key]) {
+                for(let k of limit.path) {
+                    let value = k.id;
                     var path = obj[value];
                     if(path) {
                         let userSubs;
-                        let subPages = path.subPages || [] ;
-                        sub_pages && (userSubs = sub_pages[key]) && (userSubs = userSubs[value]);
                         userSubs = userSubs || [];
-                        let banSubPages = subPages.filter(x => !userSubs.includes(x.id.toString()));
                         page[path.path] = {
                             id: path.id.toString(),
                             router: false,
                             f_id: key,
                             pageTitle : path.name,
-                            banSubPages,
+                            banSubPages: [],
                             defaultData : path.defaultData
                         };
                     }
@@ -107,7 +102,6 @@ renderApi.prototype = {
                         };
                     }
                 }
-           // }
             if(limit.display) {
                 pageAll[key] = {
                     id : limit.id,
