@@ -3,11 +3,11 @@ node_modules/
 db/
 static/dist/
 npm-debug.log
-.vscode/launch.json
+debug.log
+.vscode/
 models2/allModules.json
 sqlLogRunTime.txt
-logs/
-typings/
+logs/typings/
 .vs/
 bin/
 obj/
